@@ -1,8 +1,259 @@
 ---
 // src/pages/index.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { Calendar, Tag, BookOpen, Users } from 'lucide-react';
+
+// 获取最新文章
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+const latestPosts = posts
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+
+// 统计数据
+const stats = {
+  totalPosts: posts.length,
+  categories: {
+    study: posts.filter(p => p.data.category === 'study').length,
+    social: posts.filter(p => p.data.category === 'social').length,
+    personal: posts.filter(p => p.data.category === 'personal').length,
+  },
+  tags: [...new Set(posts.flatMap(p => p.data.tags))].length,
+};
 ---
 
-<BaseLayout title="女巫之舞，为你祈祷⭐" description="女巫之舞，为你祈祷⭐">
-  <!-- 首页内容 -->
+<BaseLayout>
+  <!-- Hero Section -->
+  <section class="hero min-h-[70vh] relative overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <div class="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20"></div>
+    </div>
+    
+    <div class="hero-content text-center relative z-10">
+      <div class="max-w-3xl">
+        <div class="flex justify-center mb-6">
+          <img src="/favicon.svg" alt="女巫之舞" class="w-24 h-24 animate-pulse" />
+        </div>
+        <h1 class="text-5xl md:text-7xl font-bold mb-6">
+          女巫之舞
+          <span class="block text-2xl md:text-3xl mt-2">为你祈祷⭐</span>
+        </h1>
+        <p class="text-xl md:text-2xl mb-8 opacity-80">
+          分享技术、生活和思考的空间
+        </p>
+        <div class="flex flex-wrap gap-4 justify-center">
+          <a href="#latest" class="btn btn-primary btn-lg">
+            查看最新文章
+          </a>
+          <a href="/about" class="btn btn-outline btn-lg">
+            关于我
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Stats -->
+  <section class="py-12 bg-base-200">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="stat text-center">
+          <div class="stat-title">文章总数</div>
+          <div class="stat-value text-primary">{stats.totalPosts}</div>
+          <div class="stat-desc">篇精彩内容</div>
+        </div>
+        <div class="stat text-center">
+          <div class="stat-title">学习工作</div>
+          <div class="stat-value text-secondary">{stats.categories.study}</div>
+          <div class="stat-desc">技术分享</div>
+        </div>
+        <div class="stat text-center">
+          <div class="stat-title">社会活动</div>
+          <div class="stat-value text-accent">{stats.categories.social}</div>
+          <div class="stat-desc">经验分享</div>
+        </div>
+        <div class="stat text-center">
+          <div class="stat-title">标签分类</div>
+          <div class="stat-value">{stats.tags}</div>
+          <div class="stat-desc">多样主题</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Latest Posts -->
+  <section id="latest" class="py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+        最新文章
+        <div class="text-sm font-normal mt-2 opacity-70">
+          <a href="/blog" class="link link-primary">查看全部 →</a>
+        </div>
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {latestPosts.map(post => (
+          <div class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow">
+            {post.data.image && (
+              <figure>
+                <img 
+                  src={post.data.image} 
+                  alt={post.data.title}
+                  class="h-48 w-full object-cover"
+                />
+              </figure>
+            )}
+            <div class="card-body">
+              <div class="flex items-center gap-2 text-sm mb-2">
+                <span class={`badge ${
+                  post.data.category === 'study' ? 'badge-primary' :
+                  post.data.category === 'social' ? 'badge-secondary' :
+                  'badge-accent'
+                }`}>
+                  {post.data.category === 'study' ? '学习工作' :
+                   post.data.category === 'social' ? '社会活动' : '个人思想'}
+                </span>
+                <span class="opacity-70">
+                  {new Date(post.data.date).toLocaleDateString('zh-CN')}
+                </span>
+              </div>
+              
+              <h3 class="card-title">{post.data.title}</h3>
+              <p class="opacity-70 line-clamp-2">{post.data.description}</p>
+              
+              <div class="card-actions justify-between items-center mt-4">
+                <div class="flex flex-wrap gap-1">
+                  {post.data.tags.slice(0, 3).map(tag => (
+                    <span class="badge badge-outline badge-sm">#{tag}</span>
+                  ))}
+                </div>
+                <a 
+                  href={`/blog/${post.slug}`}
+                  class="btn btn-primary btn-sm"
+                >
+                  阅读更多
+                </a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+  
+  <!-- Categories -->
+  <section class="py-12 bg-base-200">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">文章分类</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <a href="/blog?category=study" class="card bg-primary text-primary-content shadow-xl hover:scale-[1.02] transition-transform">
+          <div class="card-body items-center text-center">
+            <BookOpen client:load size={48} className="mb-4" />
+            <h3 class="card-title text-2xl">学习工作</h3>
+            <p class="opacity-90">技术分享、工作经验、学习笔记</p>
+            <div class="badge badge-outline badge-lg mt-4">
+              {stats.categories.study} 篇文章
+            </div>
+          </div>
+        </a>
+        
+        <a href="/blog?category=social" class="card bg-secondary text-secondary-content shadow-xl hover:scale-[1.02] transition-transform">
+          <div class="card-body items-center text-center">
+            <Users size={48} className="mb-4" />
+            <h3 class="card-title text-2xl">社会活动</h3>
+            <p class="opacity-90">活动记录、社会实践、交流分享</p>
+            <div class="badge badge-outline badge-lg mt-4">
+              {stats.categories.social} 篇文章
+            </div>
+          </div>
+        </a>
+        
+        <a href="/blog?category=personal" class="card bg-accent text-accent-content shadow-xl hover:scale-[1.02] transition-transform">
+          <div class="card-body items-center text-center">
+            <Tag size={48} className="mb-4" />
+            <h3 class="card-title text-2xl">个人思想</h3>
+            <p class="opacity-90">生活感悟、思考随笔、个人见解</p>
+            <div class="badge badge-outline badge-lg mt-4">
+              {stats.categories.personal} 篇文章
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
+
+<script>
+  // 首页点击烟花效果
+  document.addEventListener('click', (e) => {
+    const fireworksContainer = document.getElementById('fireworks-container');
+    
+    // 创建烟花粒子
+    for (let i = 0; i < 30; i++) {
+      setTimeout(() => {
+        const particle = document.createElement('div');
+        particle.className = 'firework-particle';
+        
+        const colors = ['#FF6B6B', '#4ECDC4', '#FFD166', '#06D6A0', '#118AB2', '#EF476F'];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        
+        const size = Math.random() * 8 + 4;
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 3 + 2;
+        const vx = Math.cos(angle) * velocity;
+        const vy = Math.sin(angle) * velocity;
+        
+        particle.style.cssText = `
+          position: fixed;
+          left: ${e.clientX}px;
+          top: ${e.clientY}px;
+          width: ${size}px;
+          height: ${size}px;
+          background: ${color};
+          border-radius: 50%;
+          pointer-events: none;
+          z-index: 9998;
+          opacity: 1;
+        `;
+        
+        fireworksContainer.appendChild(particle);
+        
+        // 动画
+        let x = e.clientX;
+        let y = e.clientY;
+        let opacity = 1;
+        
+        function animate() {
+          x += vx;
+          y += vy;
+          opacity -= 0.02;
+          
+          particle.style.transform = `translate(${x - e.clientX}px, ${y - e.clientY}px)`;
+          particle.style.opacity = opacity.toString();
+          
+          if (opacity > 0) {
+            requestAnimationFrame(animate);
+          } else {
+            particle.remove();
+          }
+        }
+        
+        animate();
+      }, i * 20);
+    }
+  });
+</script>
+
+<style>
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  
+  .hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+</style>

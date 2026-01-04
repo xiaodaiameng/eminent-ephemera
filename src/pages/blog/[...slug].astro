@@ -1,0 +1,170 @@
+---
+// src/pages/blog/[...slug].astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  try {
+    const posts = await getCollection('blog');
+    
+    // 调试信息：检查获取到的文章
+    console.log('=== DEBUG: getStaticPaths ===');
+    console.log('Total posts found:', posts.length);
+    posts.forEach((post, index) => {
+      console.log(`Post ${index + 1}:`, {
+        id: post.id,
+        slug: post.slug,
+        hasData: !!post.data,
+        dataKeys: post.data ? Object.keys(post.data) : 'no data'
+      });
+    });
+    
+    return posts.map(post => ({
+      params: { 
+        slug: post.slug 
+      },
+      props: { 
+        post,
+        debugInfo: {
+          id: post.id,
+          slug: post.slug
+        }
+      },
+    }));
+  } catch (error) {
+    console.error('Error in getStaticPaths:', error);
+    return [];
+  }
+}
+
+const { post, debugInfo } = Astro.props;
+
+// 调试信息：检查接收到的 props
+console.log('=== DEBUG: Component Props ===');
+console.log('URL Slug:', Astro.params.slug);
+console.log('Debug Info:', debugInfo);
+console.log('Post object:', post);
+console.log('Has post?', !!post);
+console.log('Post ID:', post?.id);
+console.log('Post data:', post?.data);
+
+// 关键检查：确保 post 存在
+if (!post) {
+  console.error('❌ ERROR: Post is undefined for slug:', Astro.params.slug);
+  console.error('Redirecting to 404 page');
+  return Astro.redirect('/404');
+}
+
+// 检查 post 是否有必要的结构
+if (!post.data || !post.id) {
+  console.error('❌ ERROR: Post has invalid structure:', post);
+  return Astro.redirect('/404');
+}
+
+// 安全地渲染内容
+let Content;
+try {
+  console.log('Attempting to render post:', post.id);
+  const renderResult = await post.render();
+  
+  if (!renderResult) {
+    throw new Error('Render result is null or undefined');
+  }
+  
+  if (!renderResult.Content) {
+    throw new Error('Render result has no Content property');
+  }
+  
+  Content = renderResult.Content;
+  console.log('✅ Post rendered successfully');
+} catch (renderError) {
+  console.error('❌ Failed to render post:', post.id);
+  console.error('Render error:', renderError);
+  console.error('Post data for debugging:', {
+    id: post.id,
+    slug: post.slug,
+    data: post.data,
+    body: post.body ? 'has body' : 'no body'
+  });
+  
+  // 返回错误页面或重定向
+  return Astro.redirect('/404');
+}
+---
+
+<!-- 添加一些额外的调试显示（仅在开发环境） -->
+{import.meta.env.DEV && (
+  <div class="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-lg mb-4">
+    <p class="font-bold">🛠️ 调试信息（开发模式）</p>
+    <p>文章ID: {post.id}</p>
+    <p>Slug: {post.slug}</p>
+    <p>标题: {post.data.title}</p>
+  </div>
+)}
+
+<BaseLayout 
+  title={post.data.title} 
+  description={post.data.description}
+>
+  <article class="max-w-4xl mx-auto">
+    <!-- 文章头部 -->
+    <header class="mb-8">
+      <div class="flex items-center gap-2 text-sm mb-4">
+        <span class={`badge ${
+          post.data.category === 'study' ? 'badge-primary' :
+          post.data.category === 'social' ? 'badge-secondary' :
+          'badge-accent'
+        }`}>
+          {post.data.category === 'study' ? '学习工作' :
+           post.data.category === 'social' ? '社会活动' : '个人思想'}
+        </span>
+        <span class="opacity-70">
+          {new Date(post.data.date).toLocaleDateString('zh-CN')}
+        </span>
+      </div>
+      
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">{post.data.title}</h1>
+      <p class="text-xl opacity-70 mb-6">{post.data.description}</p>
+      
+      {post.data.image && (
+        <img 
+          src={post.data.image} 
+          alt={post.data.title}
+          class="w-full h-64 md:h-96 object-cover rounded-lg mb-6"
+          loading="lazy"
+        />
+      )}
+    </header>
+    
+    <!-- 文章内容 -->
+    <div class="prose prose-lg max-w-none dark:prose-invert">
+      {Content && <Content />}
+    </div>
+    
+    <!-- 标签 -->
+    {post.data.tags && post.data.tags.length > 0 && (
+      <div class="mt-8 pt-6 border-t dark:border-gray-700">
+        <div class="flex flex-wrap gap-2">
+          {post.data.tags.map(tag => (
+            <a 
+              href={`/blog?tag=${tag}`}
+              class="badge badge-outline hover:badge-primary transition-colors"
+            >
+              #{tag}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+    
+    <!-- 导航 -->
+    <div class="mt-8 flex justify-between gap-4">
+      <a href="/blog" class="btn btn-outline flex-1 text-center">
+        ← 返回博客列表
+      </a>
+      <a href="/" class="btn btn-outline flex-1 text-center">
+        返回首页 →
+      </a>
+    </div>
+  </article>
+</BaseLayout>
