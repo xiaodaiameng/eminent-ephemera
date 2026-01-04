@@ -1,0 +1,90 @@
+---
+// src/pages/blog.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import PostCard from '../components/blog/PostCard.astro';
+import TagCloud from '../components/blog/TagCloud.astro';
+
+const posts = await getCollection('blog', ({ data }) => !data.draft);
+const tags = [...new Set(posts.flatMap(post => post.data.tags))];
+const categories = {
+  study: posts.filter(post => post.data.category === 'study'),
+  social: posts.filter(post => post.data.category === 'social'),
+  personal: posts.filter(post => post.data.category === 'personal'),
+};
+
+// 获取查询参数
+const searchParams = Astro.url.searchParams;
+const selectedCategory = searchParams.get('category');
+const selectedTag = searchParams.get('tag');
+
+let filteredPosts = posts;
+if (selectedCategory) {
+  filteredPosts = posts.filter(post => post.data.category === selectedCategory);
+} else if (selectedTag) {
+  filteredPosts = posts.filter(post => post.data.tags.includes(selectedTag));
+}
+
+// 按日期排序
+filteredPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title="博客文章" description="分享我的学习工作、社会活动和个人思考">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <!-- 侧边栏 -->
+      <aside class="lg:col-span-1 space-y-6">
+        <div class="card bg-base-200">
+          <div class="card-body">
+            <h3 class="card-title">分类</h3>
+            <div class="space-y-2">
+              <a href="/blog" class={`block p-2 rounded ${!selectedCategory ? 'bg-primary' : 'hover:bg-base-300'}`}>
+                全部文章 ({posts.length})
+              </a>
+              <a href="/blog?category=study" class={`block p-2 rounded ${selectedCategory === 'study' ? 'bg-primary' : 'hover:bg-base-300'}`}>
+                学习工作 ({categories.study.length})
+              </a>
+              <a href="/blog?category=social" class={`block p-2 rounded ${selectedCategory === 'social' ? 'bg-primary' : 'hover:bg-base-300'}`}>
+                社会活动 ({categories.social.length})
+              </a>
+              <a href="/blog?category=personal" class={`block p-2 rounded ${selectedCategory === 'personal' ? 'bg-primary' : 'hover:bg-base-300'}`}>
+                个人思想 ({categories.personal.length})
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <TagCloud tags={tags} selectedTag={selectedTag} />
+        
+        <div class="card bg-base-200">
+          <div class="card-body">
+            <h3 class="card-title">归档</h3>
+            <TimeMachine />
+          </div>
+        </div>
+      </aside>
+      
+      <!-- 主内容区 -->
+      <main class="lg:col-span-3">
+        <div class="mb-8">
+          <h1 class="text-4xl font-bold mb-2">博客文章</h1>
+          <p class="text-lg opacity-70">分享技术、生活和思考</p>
+        </div>
+        
+        {filteredPosts.length > 0 ? (
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredPosts.map(post => (
+              <PostCard post={post} />
+            ))}
+          </div>
+        ) : (
+          <div class="text-center py-12">
+            <div class="text-6xl mb-4">📝</div>
+            <h3 class="text-2xl font-semibold mb-2">暂无文章</h3>
+            <p class="opacity-70">该分类下还没有文章哦~</p>
+          </div>
+        )}
+      </main>
+    </div>
+  </div>
+</BaseLayout>

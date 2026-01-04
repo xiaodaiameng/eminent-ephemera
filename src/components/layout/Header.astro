@@ -1,0 +1,100 @@
+---
+// src/components/layout/Header.astro
+// 在 Astro 文件中使用 class 而不是 className
+---
+
+<header class="sticky top-0 z-10 bg-base-200/80 backdrop-blur-md">
+  <div class="navbar max-w-7xl mx-auto">
+    <div class="flex-1">
+      <!-- 移动端菜单按钮 -->
+      <label for="sidebar-drawer" class="btn btn-circle btn-ghost lg:hidden">
+        <!-- 使用 SVG 图标代替 lucide-react -->
+        <svg 
+          class="w-6 h-6" 
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2" 
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </label>
+      
+      <!-- Logo 和站点名称 -->
+      <a href="/" class="btn btn-ghost text-xl">
+        <img src="/favicon.svg" alt="Logo" class="w-8 h-8 mr-2" />
+        女巫之舞
+      </a>
+    </div>
+    
+    <!-- 桌面端导航（大屏幕显示） -->
+    <div class="flex-none hidden lg:flex">
+      <ul class="menu menu-horizontal px-1">
+        <li><a href="/" class="hover:text-primary">首页</a></li>
+        <li><a href="/blog" class="hover:text-primary">博客</a></li>
+        <li><a href="/blog?category=study" class="hover:text-primary">学习工作</a></li>
+        <li><a href="/blog?category=social" class="hover:text-primary">社会活动</a></li>
+        <li><a href="/blog?category=personal" class="hover:text-primary">个人思想</a></li>
+        <li><a href="/about" class="hover:text-primary">关于</a></li>
+        <li><a href="/admin" class="hover:text-primary">管理</a></li>
+      </ul>
+    </div>
+    
+    <!-- 移动端下拉菜单（小屏幕显示） -->
+    <div class="flex-none lg:hidden">
+      <div class="dropdown dropdown-end">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
+          <svg 
+            class="w-6 h-6" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+              stroke-width="2" 
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </div>
+        <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+          <li><a href="/">首页</a></li>
+          <li><a href="/blog">博客</a></li>
+          <li><a href="/blog?category=study">学习工作</a></li>
+          <li><a href="/blog?category=social">社会活动</a></li>
+          <li><a href="/blog?category=personal">个人思想</a></li>
+          <li><a href="/about">关于</a></li>
+          <li><a href="/admin">管理</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* 自定义样式 */
+  header {
+    transition: background-color 0.3s ease;
+  }
+  
+  /* 下拉菜单动画 */
+  .dropdown-content {
+    animation: dropdown-fade 0.2s ease;
+  }
+  
+  @keyframes dropdown-fade {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

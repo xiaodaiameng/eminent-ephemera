@@ -1,0 +1,41 @@
+---
+// src/components/ui/ThemeToggle.astro
+import { useState, useEffect } from 'react';
+import { Sun, Moon } from 'lucide-react';
+import React from 'react';
+
+const ThemeToggleComponent = () => {
+  const [theme, setTheme] = useState('light');
+  
+  useEffect(() => {
+    // 读取保存的主题
+    const savedTheme = localStorage.getItem('theme');
+    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initialTheme = savedTheme || (systemDark ? 'dark' : 'light');
+    
+    setTheme(initialTheme);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+  }, []);
+  
+  const toggleTheme = () => {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
+  
+  return (
+    <button 
+      onClick={toggleTheme}
+      className="btn btn-circle fixed bottom-32 right-4 z-50 shadow-lg"
+      aria-label={`切换到${theme === 'light' ? '暗色' : '亮色'}主题`}
+    >
+      {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+    </button>
+  );
+};
+---
+
+<div id="theme-toggle">
+  <ThemeToggleComponent client:load />
+</div>

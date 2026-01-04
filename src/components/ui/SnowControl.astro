@@ -1,0 +1,248 @@
+---
+// src/components/ui/SnowControl.astro
+// 使用 Canvas 实现的飘雪效果，性能更好
+---
+
+<!-- 飘雪控制按钮 -->
+<button 
+  id="snow-toggle-btn"
+  class="fixed bottom-20 right-4 z-[10000] btn btn-circle shadow-lg bg-base-100"
+  aria-label="切换飘雪"
+>
+  <span id="snow-btn-icon">❄️</span>
+</button>
+
+<!-- Canvas 画布 -->
+<canvas 
+  id="snow-canvas" 
+  style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+    display: none;
+  "
+></canvas>
+
+<script>
+  // Canvas 飘雪效果
+  (function() {
+    // 状态变量
+    let isSnowing = true;
+    let animationId = null;
+    let canvas, ctx;
+    let width, height;
+    
+    // 雪花数组
+    const flakes = Array.from({length: 80}, () => ({
+      x: 0,
+      y: 0,
+      size: 0,
+      speed: 0,
+      sway: 0,
+      opacity: 0
+    }));
+    
+    // 初始化雪花
+    function initFlakes() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      
+      flakes.forEach(flake => {
+        flake.x = Math.random() * width;
+        flake.y = Math.random() * -height;
+        flake.size = Math.random() * 4 + 2;
+        flake.speed = Math.random() * 1 + 0.8;
+        flake.sway = Math.random() * 2 - 1;
+        flake.opacity = flake.size / 6;
+      });
+    }
+    
+    // 绘制雪花
+    function drawFlakes() {
+      ctx.clearRect(0, 0, width, height);
+      
+      flakes.forEach(flake => {
+        flake.y += flake.speed;
+        flake.x += flake.sway * 0.5;
+        flake.sway += (Math.random() - 0.5) * 0.1;
+        
+        // 限制 sway 范围
+        flake.sway = Math.max(-2, Math.min(2, flake.sway));
+        
+        // 如果雪花飘出屏幕，重置
+        if (flake.y > height) {
+          flake.y = -flake.size;
+          flake.x = Math.random() * width;
+        }
+        
+        if (flake.x > width + flake.size) {
+          flake.x = -flake.size;
+        } else if (flake.x < -flake.size) {
+          flake.x = width + flake.size;
+        }
+        
+        // 绘制雪花
+        ctx.beginPath();
+        ctx.arc(flake.x, flake.y, flake.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${flake.opacity})`;
+        ctx.fill();
+      });
+    }
+    
+    // 动画循环
+    function animate() {
+      drawFlakes();
+      animationId = requestAnimationFrame(animate);
+    }
+    
+    // 更新按钮状态
+    function updateButton() {
+      const icon = document.getElementById('snow-btn-icon');
+      const button = document.getElementById('snow-toggle-btn');
+      
+      if (icon && button) {
+        if (isSnowing) {
+          icon.textContent = '❄️';
+          button.setAttribute('aria-label', '关闭飘雪');
+          button.classList.add('bg-primary');
+          button.classList.remove('bg-base-300');
+        } else {
+          icon.textContent = '✕';
+          button.setAttribute('aria-label', '开启飘雪');
+          button.classList.add('bg-base-300');
+          button.classList.remove('bg-primary');
+        }
+      }
+    }
+    
+    // 开始飘雪
+    function startSnow() {
+      if (!canvas) {
+        canvas = document.getElementById('snow-canvas');
+        ctx = canvas.getContext('2d');
+      }
+      
+      if (canvas && ctx) {
+        canvas.style.display = 'block';
+        initFlakes();
+        
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+        }
+        animate();
+      }
+    }
+    
+    // 停止飘雪
+    function stopSnow() {
+      if (canvas) {
+        canvas.style.display = 'none';
+      }
+      
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+      
+      if (ctx) {
+        ctx.clearRect(0, 0, width, height);
+      }
+    }
+    
+    // 切换飘雪
+    function toggleSnow() {
+      isSnowing = !isSnowing;
+      localStorage.setItem('showSnow', isSnowing.toString());
+      
+      updateButton();
+      
+      if (isSnowing) {
+        startSnow();
+      } else {
+        stopSnow();
+      }
+    }
+    
+    // 窗口大小调整
+    function resize() {
+      if (!canvas || !isSnowing) return;
+      
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      
+      // 重新初始化雪花位置
+      flakes.forEach(flake => {
+        if (flake.x > width) flake.x = Math.random() * width;
+        if (flake.y > height) flake.y = Math.random() * -height;
+      });
+    }
+    
+    // 初始化
+    function init() {
+      // 从 localStorage 读取设置
+      const saved = localStorage.getItem('showSnow');
+      if (saved !== null) {
+        isSnowing = saved === 'true';
+      }
+      
+      // 获取 Canvas 元素
+      canvas = document.getElementById('snow-canvas');
+      if (!canvas) return;
+      
+      ctx = canvas.getContext('2d');
+      width = window.innerWidth;
+      height = window.innerHeight;
+      
+      // 设置 Canvas 大小
+      canvas.width = width;
+      canvas.height = height;
+      
+      // 设置按钮状态
+      updateButton();
+      
+      // 绑定按钮事件
+      const button = document.getElementById('snow-toggle-btn');
+      if (button) {
+        button.addEventListener('click', toggleSnow);
+      }
+      
+      // 监听窗口大小变化
+      window.addEventListener('resize', resize);
+      
+      // 开始飘雪
+      if (isSnowing) {
+        startSnow();
+      }
+    }
+    
+    // 页面加载后初始化
+    if (typeof window !== 'undefined') {
+      document.addEventListener('DOMContentLoaded', init);
+    }
+  })();
+</script>
+
+<style>
+  /* 优化 Canvas 性能 */
+  #snow-canvas {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+  
+  /* 按钮悬停效果 */
+  #snow-toggle-btn {
+    transition: all 0.3s ease;
+  }
+  
+  #snow-toggle-btn:hover {
+    transform: scale(1.1);
+  }
+</style>
