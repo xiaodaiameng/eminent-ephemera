@@ -1,10 +1,16 @@
 # build output
 dist/
+.output/
+.cache/
 # generated types
 .astro/
 
+# Vercel
+.vercel/
+
 # dependencies
 node_modules/
+node_modules/.pnpm-store/
 
 # logs
 npm-debug.log*
@@ -12,13 +18,27 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-
 # environment variables
 .env
 .env.production
+.env.local
 
 # macOS-specific files
 .DS_Store
 
+# Windows
+Thumbs.db
+
 # jetbrains setting folder
 .idea/
+
+# VS Code
+.vscode/
+
+# 测试
+coverage/
+.nyc_output/
+
+# 性能报告
+*.cpuprofile
+*.heapsnapshot
