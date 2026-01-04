@@ -1,0 +1,121 @@
+---
+// src/components/ui/SnowControl.astro
+import { useState } from 'react';
+import { Snowflake, X } from 'lucide-react';
+import React from 'react';
+
+const SnowControlComponent = () => {
+  const [showSnow, setShowSnow] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('showSnow') !== 'false';
+    }
+    return true;
+  });
+  
+  const toggleSnow = () => {
+    const newState = !showSnow;
+    setShowSnow(newState);
+    localStorage.setItem('showSnow', newState.toString());
+    window.dispatchEvent(new CustomEvent('toggleSnow', { detail: { enable: newState } }));
+  };
+  
+  return (
+    <button 
+      onClick={toggleSnow}
+      className="fixed bottom-20 right-4 z-50 btn btn-circle shadow-lg"
+      aria-label={showSnow ? '关闭飘雪' : '开启飘雪'}
+    >
+      {showSnow ? <X size={20} /> : <Snowflake size={20} />}
+    </button>
+  );
+};
+---
+
+<div id="snow-control">
+  <SnowControlComponent client:load />
+</div>
+
+<script>
+  // 飘雪效果实现
+  class Snowflake {
+    constructor() {
+      this.x = Math.random() * window.innerWidth;
+      this.y = Math.random() * window.innerHeight;
+      this.size = Math.random() * 4 + 2;
+      this.speed = Math.random() * 2 + 1;
+      this.opacity = Math.random() * 0.5 + 0.3;
+      this.element = null;
+    }
+    
+    create() {
+      this.element = document.createElement('div');
+      this.element.className = 'snowflake';
+      this.element.style.cssText = `
+        position: fixed;
+        left: ${this.x}px;
+        top: ${this.y}px;
+        width: ${this.size}px;
+        height: ${this.size}px;
+        background: white;
+        border-radius: 50%;
+        pointer-events: none;
+        opacity: ${this.opacity};
+        filter: blur(${this.size / 4}px);
+        z-index: 9999;
+      `;
+      document.getElementById('snow-container').appendChild(this.element);
+    }
+    
+    update() {
+      this.y += this.speed;
+      this.x += Math.sin(this.y * 0.01) * 0.5;
+      
+      if (this.y > window.innerHeight) {
+        this.y = -10;
+        this.x = Math.random() * window.innerWidth;
+      }
+      
+      this.element.style.transform = `translate(${this.x}px, ${this.y}px)`;
+    }
+  }
+  
+  let snowflakes = [];
+  let animationId = null;
+  
+  function createSnow(count = 100) {
+    clearSnow();
+    for (let i = 0; i < count; i++) {
+      const flake = new Snowflake();
+      flake.create();
+      snowflakes.push(flake);
+    }
+    animateSnow();
+  }
+  
+  function animateSnow() {
+    snowflakes.forEach(flake => flake.update());
+    animationId = requestAnimationFrame(animateSnow);
+  }
+  
+  function clearSnow() {
+    if (animationId) {
+      cancelAnimationFrame(animationId);
+      animationId = null;
+    }
+    
+    const container = document.getElementById('snow-container');
+    if (container) {
+      container.innerHTML = '';
+    }
+    snowflakes = [];
+  }
+  
+  // 监听飘雪控制事件
+  window.addEventListener('toggleSnow', (e) => {
+    if (e.detail.enable) {
+      createSnow(150);
+    } else {
+      clearSnow();
+    }
+  });
+</script>
