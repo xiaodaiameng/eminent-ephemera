@@ -1,90 +1,41 @@
 ---
 // src/components/ui/MusicPlayer.astro
-import { useState } from 'react';
-import { Play, Pause, Volume2 } from 'lucide-react';
-import React from 'react';
-
-const MusicPlayerComponent = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.5);
-  
-  const togglePlay = () => {
-    setIsPlaying(!isPlaying);
-    window.dispatchEvent(new CustomEvent('toggleMusic', { 
-      detail: { enable: !isPlaying, volume } 
-    }));
-  };
-  
-  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    window.dispatchEvent(new CustomEvent('adjustVolume', { 
-      detail: { volume: newVolume } 
-    }));
-  };
-  
-  return (
-    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-base-300 p-3 rounded-full shadow-lg">
-      <button 
-        onClick={togglePlay}
-        className="btn btn-circle btn-sm"
-        aria-label={isPlaying ? '暂停音乐' : '播放音乐'}
-      >
-        {isPlaying ? <Pause size={20} /> : <Play size={20} />}
-      </button>
-      
-      <Volume2 size={20} />
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.1"
-        value={volume}
-        onChange={handleVolumeChange}
-        className="range range-xs w-20"
-      />
-    </div>
-  );
-};
 ---
 
-<div id="music-player">
-  <MusicPlayerComponent client:load />
-</div>
+<button 
+  id="play-btn" 
+  style="
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 50;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1.2rem;
+  "
+>
+  🎵
+</button>
 
 <script>
-  // 音乐管理逻辑
-  let audio = null;
-  let currentVolume = 0.5;
+  const audio = new Audio('/music/小美满.mp3');
   
-  // 初始化音频
-  function initAudio() {
-    if (!audio) {
-      audio = new Audio('/music/background.mp3');
-      audio.loop = true;
-      audio.volume = currentVolume;
-    }
-  }
+  // 页面加载自动播放
+  window.onload = () => {
+    // audio.play();
+    audio.pause();
+  };
   
-  // 监听音乐控制事件
-  window.addEventListener('toggleMusic', (e) => {
-    initAudio();
-    
-    if (e.detail.enable) {
-      audio.play().catch(() => {
-        console.log('需要用户交互才能播放音乐');
-      });
-      localStorage.setItem('playMusic', 'true');
+  // 点击暂停/播放
+  document.getElementById('play-btn').onclick = () => {
+    if (audio.paused) {
+      audio.play();
     } else {
       audio.pause();
-      localStorage.setItem('playMusic', 'false');
     }
-  });
-  
-  window.addEventListener('adjustVolume', (e) => {
-    if (audio) {
-      audio.volume = e.detail.volume;
-      currentVolume = e.detail.volume;
-    }
-  });
+  };
 </script>

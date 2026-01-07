@@ -5,7 +5,7 @@ description: "这是我的第一篇博客文章，介绍这个博客的初衷和
 date: 2024-01-05
 category: "personal"
 tags: ["欢迎", "介绍", "博客"]
-image: "/blog/welcome.jpg"
+image: "/images/welcome.jpg"
 draft: false
 featured: true
 ---

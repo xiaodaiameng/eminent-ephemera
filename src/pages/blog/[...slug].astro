@@ -7,28 +7,12 @@ export async function getStaticPaths() {
   try {
     const posts = await getCollection('blog');
     
-    // 调试信息：检查获取到的文章
-    console.log('=== DEBUG: getStaticPaths ===');
-    console.log('Total posts found:', posts.length);
-    posts.forEach((post, index) => {
-      console.log(`Post ${index + 1}:`, {
-        id: post.id,
-        slug: post.slug,
-        hasData: !!post.data,
-        dataKeys: post.data ? Object.keys(post.data) : 'no data'
-      });
-    });
-    
     return posts.map(post => ({
       params: { 
         slug: post.slug 
       },
       props: { 
-        post,
-        debugInfo: {
-          id: post.id,
-          slug: post.slug
-        }
+        post
       },
     }));
   } catch (error) {
@@ -37,70 +21,32 @@ export async function getStaticPaths() {
   }
 }
 
-const { post, debugInfo } = Astro.props;
+const { post } = Astro.props;
 
-// 调试信息：检查接收到的 props
-console.log('=== DEBUG: Component Props ===');
-console.log('URL Slug:', Astro.params.slug);
-console.log('Debug Info:', debugInfo);
-console.log('Post object:', post);
-console.log('Has post?', !!post);
-console.log('Post ID:', post?.id);
-console.log('Post data:', post?.data);
-
-// 关键检查：确保 post 存在
+// 检查文章是否存在
 if (!post) {
-  console.error('❌ ERROR: Post is undefined for slug:', Astro.params.slug);
-  console.error('Redirecting to 404 page');
   return Astro.redirect('/404');
 }
 
-// 检查 post 是否有必要的结构
+// 检查文章结构
 if (!post.data || !post.id) {
-  console.error('❌ ERROR: Post has invalid structure:', post);
   return Astro.redirect('/404');
 }
 
-// 安全地渲染内容
+// 渲染文章内容
 let Content;
 try {
-  console.log('Attempting to render post:', post.id);
   const renderResult = await post.render();
   
-  if (!renderResult) {
-    throw new Error('Render result is null or undefined');
-  }
-  
-  if (!renderResult.Content) {
-    throw new Error('Render result has no Content property');
+  if (!renderResult || !renderResult.Content) {
+    return Astro.redirect('/404');
   }
   
   Content = renderResult.Content;
-  console.log('✅ Post rendered successfully');
 } catch (renderError) {
-  console.error('❌ Failed to render post:', post.id);
-  console.error('Render error:', renderError);
-  console.error('Post data for debugging:', {
-    id: post.id,
-    slug: post.slug,
-    data: post.data,
-    body: post.body ? 'has body' : 'no body'
-  });
-  
-  // 返回错误页面或重定向
   return Astro.redirect('/404');
 }
 ---
-
-<!-- 添加一些额外的调试显示（仅在开发环境） -->
-{import.meta.env.DEV && (
-  <div class="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-lg mb-4">
-    <p class="font-bold">🛠️ 调试信息（开发模式）</p>
-    <p>文章ID: {post.id}</p>
-    <p>Slug: {post.slug}</p>
-    <p>标题: {post.data.title}</p>
-  </div>
-)}
 
 <BaseLayout 
   title={post.data.title} 
