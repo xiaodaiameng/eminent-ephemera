@@ -1,86 +1,130 @@
 ---
-// src/pages/blog.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
-import PostCard from '../components/blog/PostCard.astro';
-import TagCloud from '../components/blog/TagCloud.astro';
-import TimeMachine from '../components/blog/TimeMachine.astro';
-const posts = await getCollection('blog', ({ data }) => !data.draft);
-const tags = [...new Set(posts.flatMap(post => post.data.tags))];
-const categories = {
-  study: posts.filter(post => post.data.category === 'study'),
-  social: posts.filter(post => post.data.category === 'social'),
-  personal: posts.filter(post => post.data.category === 'personal'),
+
+// 获取所有文章
+const allPosts = await getCollection('blog');
+
+// 按分类分组
+const categorizedPosts = {
+  学习: [],
+  个体: [],
+  社交: []
 };
 
-// 获取查询参数
-const searchParams = Astro.url.searchParams;
-const selectedCategory = searchParams.get('category');
-const selectedTag = searchParams.get('tag');
-
-let filteredPosts = posts;
-if (selectedCategory) {
-  filteredPosts = posts.filter(post => post.data.category === selectedCategory);
-} else if (selectedTag) {
-  filteredPosts = posts.filter(post => post.data.tags.includes(selectedTag));
+// 获取文件修改时间的函数
+async function getFileModifiedTime(slug) {
+  try {
+    // 只在 Node.js 环境下使用 fs
+    if (typeof process === 'undefined' || !process.versions.node) {
+      return new Date();
+    }
+    
+    const fs = await import('fs/promises');
+    const path = await import('path');
+    
+    // 构建文件路径
+    const filePath = path.join(process.cwd(), 'src/content/blog', `${slug}.md`);
+    
+    try {
+      const stats = await fs.stat(filePath);
+      return stats.mtime; // 返回文件的最后修改时间
+    } catch {
+      return new Date();
+    }
+  } catch {
+    return new Date();
+  }
 }
 
-// 按日期排序
-filteredPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+// 处理所有文章
+const postsWithTime = await Promise.all(
+  allPosts.map(async (post) => {
+    const lastModified = await getFileModifiedTime(post.slug);
+    return {
+      ...post,
+      lastModified
+    };
+  })
+);
+
+// 按分类分组
+for (const post of postsWithTime) {
+  const category = post.slug.split('/')[0];
+  if (categorizedPosts[category]) {
+    categorizedPosts[category].push(post);
+  }
+}
+
+// 按修改时间倒序排序
+for (const category in categorizedPosts) {
+  categorizedPosts[category].sort((a, b) => 
+    b.lastModified.getTime() - a.lastModified.getTime()
+  );
+}
 ---
 
-<BaseLayout title="博客文章" description="分享我的学习工作、社会活动和个人思考">
-  <div class="max-w-7xl mx-auto">
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-      <!-- 侧边栏 -->
-      <aside class="lg:col-span-1 space-y-6">
-        <div class="card bg-base-200">
-          <div class="card-body">
-            <h3 class="card-title">分类</h3>
-            <div class="space-y-2">
-              <a href="/blog" class={`block p-2 rounded ${!selectedCategory ? 'bg-primary' : 'hover:bg-base-300'}`}>
-                全部文章 ({posts.length})
-              </a>
-              <a href="/blog?category=study" class={`block p-2 rounded ${selectedCategory === 'study' ? 'bg-primary' : 'hover:bg-base-300'}`}>
-                学习工作 ({categories.study.length})
-              </a>
-              <a href="/blog?category=social" class={`block p-2 rounded ${selectedCategory === 'social' ? 'bg-primary' : 'hover:bg-base-300'}`}>
-                社会活动 ({categories.social.length})
-              </a>
-              <a href="/blog?category=personal" class={`block p-2 rounded ${selectedCategory === 'personal' ? 'bg-primary' : 'hover:bg-base-300'}`}>
-                个人思想 ({categories.personal.length})
-              </a>
-            </div>
-          </div>
-        </div>
-        
-        <TagCloud tags={tags} selectedTag={selectedTag} />
-        
-        <div class="card bg-base-200">
-          <div class="card-body">
-            <h3 class="card-title">归档</h3>
-            <TimeMachine />
-          </div>
-        </div>
-      </aside>
-      
-      <!-- 主内容区 -->
-      <main class="lg:col-span-3">
-        
-        {filteredPosts.length > 0 ? (
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {filteredPosts.map(post => (
-              <PostCard post={post} />
-            ))}
-          </div>
-        ) : (
-          <div class="text-center py-12">
-            <div class="text-6xl mb-4">📝</div>
-            <h3 class="text-2xl font-semibold mb-2">暂无文章</h3>
-            <p class="opacity-70">该分类下还没有文章哦~</p>
-          </div>
-        )}
-      </main>
-    </div>
-  </div>
+<BaseLayout title="分类后在内部按时间归档" description="分享学习工作、社会活动和个人思考">
+
+<main>
+  <!-- 学习分类 -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-bold mb-4">学习</h2>
+    <ul class="space-y-3">
+      {categorizedPosts.学习.map(post => (
+        <li class="border-l-4 border-blue-500 pl-4 py-1">
+          <a 
+            href={`/blog/${post.slug}`}
+            class="text-lg hover:text-blue-500 transition-colors"
+          >
+            {post.data.title}
+          </a>
+          <span class="text-sm text-gray-500 ml-2">
+            （最后更新：{post.lastModified.toLocaleDateString('zh-CN')}）
+          </span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- 个体分类 -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-bold mb-4">个体</h2>
+    <ul class="space-y-3">
+      {categorizedPosts.个体.map(post => (
+        <li class="border-l-4 border-green-500 pl-4 py-1">
+          <a 
+            href={`/blog/${post.slug}`}
+            class="text-lg hover:text-green-500 transition-colors"
+          >
+            {post.data.title}
+          </a>
+          <span class="text-sm text-gray-500 ml-2">
+            （最后更新：{post.lastModified.toLocaleDateString('zh-CN')}）
+          </span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- 社交分类 -->
+  <section class="mb-12">
+    <h2 class="text-2xl font-bold mb-4">社交</h2>
+    <ul class="space-y-3">
+      {categorizedPosts.社交.map(post => (
+        <li class="border-l-4 border-purple-500 pl-4 py-1">
+          <a 
+            href={`/blog/${post.slug}`}
+            class="text-lg hover:text-purple-500 transition-colors"
+          >
+            {post.data.title}
+          </a>
+          <span class="text-sm text-gray-500 ml-2">
+            （最后更新：{post.lastModified.toLocaleDateString('zh-CN')}）
+          </span>
+        </li>
+      ))}
+    </ul>
+  </section>
+</main>
 </BaseLayout>

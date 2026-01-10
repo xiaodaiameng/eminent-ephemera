@@ -2,7 +2,7 @@
 // src/components/layout/Header.astro
 ---
 
-<header class="sticky top-0 z-10 bg-base-200/80 backdrop-blur-md">
+<header class="header-container">
   <div class="navbar max-w-7xl mx-auto px-4">
     <div class="flex-1">
       <a href="/" class="btn btn-ghost text-xl">
@@ -15,19 +15,28 @@
     <div class="flex-none">
       <ul class="menu menu-horizontal px-1 flex items-center">
         <li class="mx-2"><a href="/" class="hover:text-primary text-sm md:text-base">首页</a></li>
-        <li class="mx-2"><a href="/blog" class="hover:text-primary text-sm md:text-base">博客</a></li>
+        <li class="mx-2"><a href="/oldblogpages" class="hover:text-primary text-sm md:text-base">博客</a></li>
         <li class="mx-2"><a href="/about" class="hover:text-primary text-sm md:text-base">关于</a></li>
-        <li class="mx-2"><a href="/admin" class="hover:text-primary text-sm md:text-base">管理</a></li>
       </ul>
     </div>
   </div>
 </header>
 
 <style>
-  header {
-    transition: background-color 0.3s ease;
+  .header-container {
+    background: rgba(233, 248, 248, 0.71);
+    backdrop-filter: blur(2px);
+    border-top: 1px solid rgba(255, 199, 240, 0.747);
+    padding: 0.1rem 1rem;
+    margin-top: auto;
+    flex-shrink: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
   }
-  
+
   /* 确保在移动端也能正常显示 */
   @media (max-width: 640px) {
     .navbar {

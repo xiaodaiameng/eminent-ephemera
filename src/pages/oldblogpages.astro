@@ -1,0 +1,401 @@
+---
+// src/pages/oldblogpages.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="博客" description="查看博客">
+  <main>
+    <article>
+      <div class="prose">
+        <!-- 每日语录部分 -->
+        <div class="quote-container">
+          <div class="quote-text" id="daily-quote">
+            "他们是名人，我们是人名，不一样的。"——网评
+          </div>
+          <hr />
+        </div>
+        
+        <!-- 轮播图部分 -->
+        <div class="carousel-container">
+          <div class="carousel" id="daily-carousel">
+            <!-- 图片会通过JS动态添加 -->
+          </div>
+          <div class="carousel-controls">
+            <button class="carousel-btn prev" onclick="prevSlide()">‹</button>
+            <div class="carousel-dots" id="carousel-dots">
+              <!-- 点状指示器 -->
+            </div>
+            <button class="carousel-btn next" onclick="nextSlide()">›</button>
+          </div>
+        </div>
+        <br>
+        
+        <!-- 文章列表 -->
+        <div class="article-list">
+          <!-- 文章1 -->
+          <a href="/blog/学习" class="article-item">
+            <div class="article-image">
+              <img src="/images/xiaohei.jpg" alt="学习" />
+            </div>
+            <div class="article-title">学习</div>
+          </a>
+          <!-- 文章2 -->
+          <a href="/blog/社交" class="article-item">
+            <div class="article-image">
+              <img src="/images/xiamu.jpg" alt="社交" />
+            </div>
+            <div class="article-title">社交</div>
+          </a>
+          <!-- 文章3 -->
+          <a href="/blog/个体" class="article-item">
+            <div class="article-image">
+              <img src="/images/wusaqi.png" alt="个体" />
+            </div>
+            <div class="article-title">个体</div>
+          </a>
+        </div>
+      </div>
+    </article>
+  </main>
+</BaseLayout>
+
+<style>
+  /* 轮播图容器 */
+  .carousel-container {
+    margin-bottom: 5rem;
+    position: relative;
+    overflow: hidden; 
+  }
+  
+  .carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-overflow-scrolling: touch; /* 移动端平滑滚动 */
+  }
+  
+  .carousel::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  .carousel::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+  }
+  
+  .carousel::-webkit-scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.3);
+    border-radius: 4px;
+  }
+  
+  .carousel-slide {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+  }
+  
+  .carousel-slide img {
+    width: 100%;
+    height: 1000px;
+    object-fit: contain;
+    display: block;
+    border-radius: 16px;
+  }
+  
+  /* 轮播图控制按钮 */
+  .carousel-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .carousel-btn {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #333;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+  
+  .carousel-btn:hover {
+    background: rgba(255, 255, 255, 0.95);
+    transform: scale(1.1);
+  }
+  
+  /* 点状指示器 */
+  .carousel-dots {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .carousel-dot.active {
+    background: #4dabf7;
+  }
+  
+  /* 其他样式保持不变 */
+  .quote-container {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  .quote-text {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-size: 1.4rem;
+    line-height: 1.6;
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: break-word;
+    white-space: pre-wrap;
+    text-align: center;
+    margin: 0 auto;
+    max-width: 800px;
+  }
+  
+  .quote-container hr {
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, #ff6b8b, #4dabf7);
+    border: none;
+    margin: 1.5rem auto;
+    border-radius: 3px;
+  }
+  
+  .article-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  
+  .article-item {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 66px;
+    overflow: hidden;
+  }
+  
+  .article-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+  
+  .article-image {
+    width: 100%;
+    max-height: 100%;
+    border-radius: 66px;
+    overflow: hidden;
+  }
+  
+  .article-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #f5f5f5;
+  }
+  
+  .article-title {
+    padding: 1rem;
+    text-align: center;
+    font-weight: 600;
+    color: #333;
+    border-top: 1px solid #f0f0f0;
+  }
+</style>
+
+<script>
+  const carouselImages = [
+    '/images/girl.jpg',
+    '/images/witch.png',
+    '/images/aniya.jpg',
+    '/images/welcome.jpg',
+    '/images/butterflies.jpg',
+    '/images/fulilian.jpg',
+    '/images/haizeiwang.jpg',
+    '/images/jiatenghui.jpg',
+    '/images/kelasong.jpg',
+    '/images/lianggongchunri.jpg',
+    '/images/haizeiwang2.jpg'
+  ];
+  
+  // 每日语录列表
+  const quotes = [
+    "“他们是名人，我们是人名，不一样的。”——网评",
+    "“梦想不会逃跑，逃跑的只有自己。”",
+    "“简单的事情重复做，重复的事情用心做。”",
+    "“保持热爱，奔赴山海。”",
+    "“岁月是一场有去无回的旅行，好的坏的都是风景。”"
+  ];
+  
+  // 初始化页面
+  document.addEventListener('DOMContentLoaded', function() {
+    // 设置每日语录
+    setupDailyQuote();
+    
+    // 设置轮播图
+    setupCarousel();
+    
+    // 自动轮播
+    startAutoSlide();
+  });
+  
+  // 每日语录功能
+  function setupDailyQuote() {
+    const today = new Date();
+    const dateString = `${today.getFullYear()}${today.getMonth()}${today.getDate()}`;
+    const quoteIndex = parseInt(dateString) % quotes.length;
+    const quoteElement = document.getElementById('daily-quote');
+    
+    if (quoteElement) {
+      quoteElement.textContent = quotes[quoteIndex];
+    }
+  }
+  
+  // 轮播图功能
+  let currentSlide = 0;
+  let carouselElement;
+  let dotsContainer;
+  
+  function setupCarousel() {
+    carouselElement = document.getElementById('daily-carousel');
+    dotsContainer = document.getElementById('carousel-dots');
+    
+    if (!carouselElement) return;
+    
+    // 清空内容
+    carouselElement.innerHTML = '';
+    if (dotsContainer) dotsContainer.innerHTML = '';
+    
+    // 创建轮播图幻灯片
+    carouselImages.forEach((imgSrc, index) => {
+      // 创建幻灯片
+      const slide = document.createElement('div');
+      slide.className = 'carousel-slide';
+      slide.setAttribute('data-index', String(index));
+      
+      const img = document.createElement('img');
+      img.src = imgSrc;
+      img.alt = `轮播图 ${index + 1}`;
+      
+      slide.appendChild(img);
+      carouselElement.appendChild(slide);
+      
+      // 创建指示点
+      if (dotsContainer) {
+        const dot = document.createElement('div');
+        dot.className = 'carousel-dot';
+        if (index === 0) dot.classList.add('active');
+        dot.setAttribute('data-index', String(index));
+        dot.onclick = () => goToSlide(index);
+        dotsContainer.appendChild(dot);
+      }
+    });
+    
+    // 根据日期设置起始图片
+    const today = new Date();
+    const dayOfYear = Math.floor(
+    (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 
+    (1000 * 60 * 60 * 24)
+    );
+    const startIndex = dayOfYear % carouselImages.length;
+    
+    goToSlide(startIndex);
+  }
+  
+  // 切换到指定幻灯片
+  function goToSlide(index) {
+    if (index < 0) index = carouselImages.length - 1;
+    if (index >= carouselImages.length) index = 0;
+    
+    currentSlide = index;
+    
+    // 滚动到对应位置
+    if (carouselElement) {
+      const slide = carouselElement.querySelector(`[data-index="${index}"]`);
+      if (slide) {
+        carouselElement.scrollTo({
+          left: slide.offsetLeft,
+          behavior: 'smooth'
+        });
+      }
+    }
+    
+    // 更新指示点
+    updateDots();
+  }
+  
+  // 上一张
+  function prevSlide() {
+    goToSlide(currentSlide - 1);
+  }
+  
+  // 下一张
+  function nextSlide() {
+    goToSlide(currentSlide + 1);
+  }
+  
+  // 更新指示点
+  function updateDots() {
+    const dots = document.querySelectorAll('.carousel-dot');
+    dots.forEach((dot, index) => {
+      if (index === currentSlide) {
+        dot.classList.add('active');
+      } else {
+        dot.classList.remove('active');
+      }
+    });
+  }
+  
+  // 自动轮播
+  let autoSlideInterval;
+  
+  function startAutoSlide() {
+    if (autoSlideInterval) clearInterval(autoSlideInterval);
+    
+    autoSlideInterval = setInterval(() => {
+      nextSlide();
+    }, 5000); // 每5秒自动切换
+  }
+  
+  // 鼠标悬停时暂停自动轮播
+  document.querySelector('.carousel-container')?.addEventListener('mouseenter', () => {
+    if (autoSlideInterval) clearInterval(autoSlideInterval);
+  });
+  
+  document.querySelector('.carousel-container')?.addEventListener('mouseleave', () => {
+    startAutoSlide();
+  });
+</script>

@@ -3,6 +3,36 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout>
-  <div style="min-height: 100vh;"></div>
+<BaseLayout title="首页" description="来喵喵外婆的花田喝茶呀">
+  <main class="min-h-screen flex flex-col items-center justify-center">
+    <div class="text-center">
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+<h1 class="text-4xl md:text-5xl font-bold mb-6" style= " color:#e0f7fa; ">
+  欢迎来喵喵外婆的花田喝茶呀
+</h1>      <br>
+<br>
+      <br><br>
+      <br>
+      <p class="text-xl mb-8 opacity-70">这是一个小小的空间</p>
+      <br>
+      <br>
+      <br>
+
+      <br>
+      <a href="/blog" 
+        class="inline-block px-8 py-3 text-white text-lg font-medium rounded-lg transition-all duration-300 hover:scale-105"
+        style="
+          background: linear-gradient(135deg, #c6fbff 0%, #cf9fffd2 100%);
+          color: #ffffff;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        "
+>
+  查看所有文章 →
+</a>
+    </div>
+  </main>
 </BaseLayout>

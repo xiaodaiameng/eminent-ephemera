@@ -1,116 +1,27 @@
 ---
 // src/pages/blog/[...slug].astro
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import { getEntry } from 'astro:content';
 
-export async function getStaticPaths() {
-  try {
-    const posts = await getCollection('blog');
-    
-    return posts.map(post => ({
-      params: { 
-        slug: post.slug 
-      },
-      props: { 
-        post
-      },
-    }));
-  } catch (error) {
-    console.error('Error in getStaticPaths:', error);
-    return [];
-  }
-}
+const { slug } = Astro.params;
 
-const { post } = Astro.props;
+// 新方法：getEntry
+const entry = await getEntry('blog', slug);
 
-// 检查文章是否存在
-if (!post) {
+if (!entry) {
   return Astro.redirect('/404');
 }
 
-// 检查文章结构
-if (!post.data || !post.id) {
-  return Astro.redirect('/404');
-}
-
-// 渲染文章内容
-let Content;
-try {
-  const renderResult = await post.render();
-  
-  if (!renderResult || !renderResult.Content) {
-    return Astro.redirect('/404');
-  }
-  
-  Content = renderResult.Content;
-} catch (renderError) {
-  return Astro.redirect('/404');
-}
+const { Content } = await entry.render();
 ---
 
-<BaseLayout 
-  title={post.data.title} 
-  description={post.data.description}
->
-  <article class="max-w-4xl mx-auto">
-    <!-- 文章头部 -->
-    <header class="mb-8">
-      <div class="flex items-center gap-2 text-sm mb-4">
-        <span class={`badge ${
-          post.data.category === 'study' ? 'badge-primary' :
-          post.data.category === 'social' ? 'badge-secondary' :
-          'badge-accent'
-        }`}>
-          {post.data.category === 'study' ? '学习工作' :
-           post.data.category === 'social' ? '社会活动' : '个人思想'}
-        </span>
-        <span class="opacity-70">
-          {new Date(post.data.date).toLocaleDateString('zh-CN')}
-        </span>
+<BaseLayout title={entry.data.title}>
+  <main class="max-w-3xl mx-auto px-4 py-16">
+    <article>
+      <h1 class="text-3xl font-bold mb-6">{entry.data.title}</h1>
+      <div class="prose prose-lg max-w-none">
+        <Content />
       </div>
-      
-      <h1 class="text-4xl md:text-5xl font-bold mb-4">{post.data.title}</h1>
-      <p class="text-xl opacity-70 mb-6">{post.data.description}</p>
-      
-      {post.data.image && (
-        <img 
-          src={post.data.image} 
-          alt={post.data.title}
-          class="w-full h-64 md:h-96 object-cover rounded-lg mb-6"
-          loading="lazy"
-        />
-      )}
-    </header>
-    
-    <!-- 文章内容 -->
-    <div class="prose prose-lg max-w-none dark:prose-invert">
-      {Content && <Content />}
-    </div>
-    
-    <!-- 标签 -->
-    {post.data.tags && post.data.tags.length > 0 && (
-      <div class="mt-8 pt-6 border-t dark:border-gray-700">
-        <div class="flex flex-wrap gap-2">
-          {post.data.tags.map(tag => (
-            <a 
-              href={`/blog?tag=${tag}`}
-              class="badge badge-outline hover:badge-primary transition-colors"
-            >
-              #{tag}
-            </a>
-          ))}
-        </div>
-      </div>
-    )}
-    
-    <!-- 导航 -->
-    <div class="mt-8 flex justify-between gap-4">
-      <a href="/blog" class="btn btn-outline flex-1 text-center">
-        ← 返回博客列表
-      </a>
-      <a href="/" class="btn btn-outline flex-1 text-center">
-        返回首页 →
-      </a>
-    </div>
-  </article>
+    </article>
+  </main>
 </BaseLayout>

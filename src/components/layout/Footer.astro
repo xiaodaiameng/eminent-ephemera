@@ -1,0 +1,117 @@
+---
+// src/components/layout/Footer.astro
+---
+
+<footer class="footer-container">
+  <div class="footer-content">
+    <!-- 运行时间 -->
+    <div class="uptime-counter">
+      <div class="counter-content">
+        <span id="uptime-counter" class="counter-display">
+          0年 0月 0日 00:00:00
+        </span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // 网站上线时间（根据你的实际上线时间修改）
+  const siteLaunchDate = new Date('2024-01-01T00:00:00');
+  
+  function updateUptimeCounter() {
+    const now = new Date();
+    const diff = now.getTime() - siteLaunchDate.getTime();
+    
+    // 计算年、月、日
+    const years = Math.floor(diff / (365.25 * 24 * 60 * 60 * 1000));
+    const months = Math.floor((diff % (365.25 * 24 * 60 * 60 * 1000)) / (30.44 * 24 * 60 * 60 * 1000));
+    const days = Math.floor((diff % (30.44 * 24 * 60 * 60 * 1000)) / (24 * 60 * 60 * 1000));
+    
+    // 计算时、分、秒
+    const hours = Math.floor((diff % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+    const minutes = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
+    const seconds = Math.floor((diff % (60 * 1000)) / 1000);
+    
+    // 更新显示
+    const counterElement = document.getElementById('uptime-counter');
+    if (counterElement) {
+      counterElement.textContent = `网站已运行 ${years}年${months}月${days}日${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+  }
+  
+  // 初始更新
+  updateUptimeCounter();
+  
+  // 每秒更新一次
+  setInterval(updateUptimeCounter, 1000);
+</script>
+
+<style>
+  .footer-container {
+    background: rgba(233, 248, 248, 0.71);
+    backdrop-filter: blur(2px);
+    border-top: 1px solid rgba(200, 170, 200, 0.3);
+    padding: 1rem 1rem;
+    margin-top: auto;
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+
+  }
+  
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .uptime-counter {
+    flex-shrink: 0;
+  }
+  
+  .counter-content {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  
+  .counter-label {
+    font-size: 0.85rem;
+    color: #6b5b7a;
+  }
+  
+  .counter-display {
+    font-family: 'Monaco', 'Consolas', 'Menlo', monospace;
+    font-size: 0.8rem;
+    color: #5a4a6a;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  
+  /* 响应式 */
+  @media (max-width: 640px) {
+    .footer-container {
+      padding: 0.6rem 0.8rem;
+    }
+    
+    .footer-content {
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    
+    .counter-content {
+      justify-content: center;
+    }
+    
+    .counter-display {
+      font-size: 0.75rem;
+    }
+  }
+</style>

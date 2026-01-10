@@ -1,10 +1,12 @@
 ---
 // src/layouts/BaseLayout.astro
+import Loading from '@/components/layout/Loading.astro';
 import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
 import Clicks from '@/components/ui/Clicks.astro';
 import MusicPlayer from '@/components/ui/MusicPlayer.astro';
 import SnowControl from '@/components/ui/SnowControl.astro';
+import ThemeToggle from '@/components/ui/ThemeToggle.astro';
 const { title = '女巫之舞', description = '女巫之舞，为你祈祷⭐' } = Astro.props;
 ---
 
@@ -15,6 +17,7 @@ const { title = '女巫之舞', description = '女巫之舞，为你祈祷⭐' }
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content={description}>
+  <!-- SEO:Search Engine Optimization -->
   <meta name="keywords" content="花田随笔,个人生活,开发学习">
   <meta property="og:title" content={title}>
   <meta property="og:description" content={description}>
@@ -28,10 +31,15 @@ const { title = '女巫之舞', description = '女巫之舞，为你祈祷⭐' }
 </head>
 
 <body>
+  <slot/>
+  <Loading/>
   <Header />
   <Footer />
   <Clicks/>
   <SnowControl />
   <MusicPlayer />
+  <ThemeToggle/>
 </body>
 </html>
+
+

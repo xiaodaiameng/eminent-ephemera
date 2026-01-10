@@ -1,9 +1,19 @@
 ---
 // src/pages/about.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { MessageSquare, Heart, Coffee } from 'lucide-react';
+
+// 如果想要确认对话框，必须用前端 JavaScript
 ---
 
-<BaseLayout title="关于" description="关于我和这个博客空间">
-src/pages/about.astro嗯嗯
+<BaseLayout title="关于另一个后台" description="关于另一个后台">
+  <script>
+    setTimeout(() => {
+      const confirmed = confirm('即将进入 Java 项目演示');
+      if (confirmed) {
+        window.location.replace('/java-app/');
+      } else {
+        window.location.replace('/');
+      }
+    }, 100);
+  </script>
 </BaseLayout>

@@ -1,19 +1,14 @@
 // src/content/config.ts
 import { defineCollection, z } from 'astro:content';
 
-const blog = defineCollection({
+const blogCollection = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
-    description: z.string(),
-    date: z.date(),
-    updated: z.date().optional(),
-    category: z.enum(['study', 'social', 'personal']),
-    tags: z.array(z.string()).default([]),
-    image: z.string().optional(),
-    draft: z.boolean().default(false),
-    featured: z.boolean().default(false),
+    // 只需要标题，时间自动获取
   }),
 });
 
-export const collections = { blog };
+export const collections = {
+  'blog': blogCollection,
+};

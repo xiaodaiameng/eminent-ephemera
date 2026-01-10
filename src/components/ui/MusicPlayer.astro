@@ -1,41 +1,229 @@
----
-// src/components/ui/MusicPlayer.astro
----
-
+<!-- MusicPlayer.astro -->
 <button 
-  id="play-btn" 
+  id="global-music-toggle"
   style="
     position: fixed;
     bottom: 1rem;
     right: 1rem;
-    z-index: 50;
-    width: 1.5rem;
-    height: 1.5rem;
+    z-index: 9999;
+    width: 2rem;
+    height: 2rem;
     border-radius: 50%;
-    border: none;
-    background: transparent;
+    border: 2px solid rgba(255, 174, 174, 0.982);
+    background: white;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(255, 152, 152, 0.2);
+    transition: all 0.3s ease;
   "
+  title="播放/暂停音乐"
 >
   🎵
 </button>
 
 <script>
-  const audio = new Audio('/music/小美满.mp3');
+// 使用闭包方案，完全避免全局变量
+(() => {
+  console.log('=== 音乐播放器初始化 ===');
   
-  // 页面加载自动播放
-  window.onload = () => {
-    // audio.play();
-    audio.pause();
-  };
+  const button = document.getElementById('global-music-toggle');
+  if (!button) {
+    console.error('找不到播放按钮');
+    return;
+  }
   
-  // 点击暂停/播放
-  document.getElementById('play-btn').onclick = () => {
-    if (audio.paused) {
-      audio.play();
-    } else {
-      audio.pause();
+  // 创建闭包内的私有变量
+  let audio = null;
+  let isPlaying = false;
+  const musicList = [
+'/music/CallofSilence_pure.mp3',
+'/music/FarAwayfromHome.mp3',
+'/music/NormalNoMore_pure.mp3',
+'/music/OneLastKiss.mp3',
+'/music/世界那么大还是遇见你.mp3',
+'/music/世间美好与你环环相扣.mp3',
+'/music/你的名字.mp3',
+'/music/勇气.mp3',
+'/music/匆匆那年.mp3',
+'/music/千千阙歌.mp3',
+'/music/单车.mp3',
+'/music/博人传f2.mp3',
+'/music/博人传f3.mp3',
+'/music/博人传主题曲.mp3',
+'/music/告白之夜_pure.mp3',
+'/music/圣诞快乐劳伦斯先生.mp3',
+'/music/城南花已开_pure.mp3',
+'/music/天气之子.mp3',
+'/music/如果可以.mp3',
+'/music/如果的事.mp3',
+'/music/宾克斯的美酒.mp3',
+'/music/海贼王_风的去向.mp3',
+'/music/小美满.mp3',
+'/music/年轮.mp3',
+'/music/快乐的阳光_pure.mp3',
+'/music/情歌.mp3',
+'/music/我用什么把你留住.mp3',
+'/music/打上火花.mp3',
+'/music/敢问路在何方.mp3',
+'/music/有何不可.mp3',
+'/music/未闻花名.mp3',
+'/music/梁祝1_3pure.mp3',
+'/music/水星记_pure.mp3',
+'/music/海底_四国语言.mp3',
+'/music/火影忍者_萤之光.mp3',
+'/music/笑看风云.mp3',
+'/music/菊次郎的夏天_pure.mp3',
+'/music/雨天.mp3',
+'/music/人生何处不相逢.mp3',
+'/music/宾克斯的美酒中文版.mp3',
+'/music/鸟之诗.mp3'
+];
+let currentIndex = 0;
+  // 初始化音频
+  function initAudio() {
+      if (audio) {
+        return;
+      }
+    if (!audio) {
+      currentIndex = Math.floor(Math.random() * musicList.length);
+      audio = new Audio(musicList[currentIndex]);
+      audio.loop = false;
+      audio.volume = 0.3; // 音量
+      audio.addEventListener('ended', playNext); 
+      
+      // 从本地存储恢复状态
+      try {
+        const savedState = localStorage.getItem('music-state');
+        const savedTime = localStorage.getItem('music-time');
+        const savedIndex = localStorage.getItem('music-index');
+        if (savedState === 'playing') {
+          isPlaying = true;
+          if (savedIndex !== null) {
+      currentIndex = parseInt(savedIndex);
+      // 重新加载对应音乐
+      setTimeout(() => {
+        if (audio) {
+          audio.src = musicList[currentIndex];
+          audio.load();
+              // === 添加自动播放 ===
+          setTimeout(() => {
+            audio.play().catch(e => {
+              console.log('自动播放需要用户交互');
+            });
+          }, 300);
+        }
+      }, 100);
     }
-  };
+    if (savedTime) {
+      audio.currentTime = parseFloat(savedTime);
+    }
+    updateButtonStyle(true);
+    console.log('恢复播放状态');
+  }
+} catch (e) {
+  console.log('本地存储读取失败');
+}
+      
+      // 监听音频事件
+      audio.addEventListener('play', () => {
+        isPlaying = true;
+        updateButtonStyle(true);
+        localStorage.setItem('music-index', currentIndex.toString());
+        localStorage.setItem('music-state', 'playing');
+      });
+      
+      audio.addEventListener('pause', () => {
+        isPlaying = false;
+        updateButtonStyle(false);
+        localStorage.setItem('music-state', 'paused');
+      });
+      
+      // 保存播放进度
+      audio.addEventListener('timeupdate', () => {
+        if (!audio.paused && audio.currentTime > 0) {
+          localStorage.setItem('music-time', audio.currentTime.toString());
+        }
+      });
+      
+      audio.addEventListener('error', (e) => {
+        console.error('音频错误:', e);
+        console.error('错误代码:', audio.error);
+      });
+    }
+  }
+// 播放下一首
+function playNext() {
+  currentIndex = (currentIndex + 1) % musicList.length;
+  if (audio) {
+    audio.src = musicList[currentIndex];
+    audio.load();
+    
+    if (isPlaying) {
+      setTimeout(() => {
+        audio.play().catch(e => {
+          console.log('自动播放下一首失败:', e);
+        });
+      }, 500);
+    }
+    
+    console.log('切换到下一首:', musicList[currentIndex]);
+    localStorage.setItem('music-index', currentIndex.toString());
+    localStorage.removeItem('music-time'); // 新歌清除时间
+  }
+}
+  // 更新按钮样式
+  function updateButtonStyle(playing) {
+    button.style.background = playing ? 'rgba(255, 174, 174, 0.4)' : 'white';
+    button.style.borderColor = playing ? 'rgba(255, 174, 174, 0.8)' : 'rgba(255, 174, 174, 0.443)';
+  }
+  
+  // 播放/暂停音乐
+  function toggleMusic() {
+    if (!audio) {
+      initAudio();
+    }
+    
+    if (isPlaying) {
+      // 暂停音乐
+      audio.pause();
+    } else {
+      // 播放音乐
+      audio.play().catch(error => {
+        console.log('播放失败:', error);
+        
+        // 显示提示
+        button.style.background = '#ffcccc';
+        button.textContent = '⚠️';
+        setTimeout(() => updateButtonStyle(false), 1000);
+        
+        // 提示用户
+        if (error.name === 'NotAllowedError') {
+          alert('请先点击页面其他位置，然后再点击播放按钮');
+        }
+      });
+    }
+  }
+  
+  // 绑定点击事件
+  button.addEventListener('click', toggleMusic);
+  
+  // 初始化按钮样式
+  updateButtonStyle(false);
+  
+// 立即初始化音频
+initAudio();
+
+// 尝试自动播放，但浏览器似乎不支持s
+setTimeout(() => {
+  if (audio && isPlaying && audio.paused) {
+    audio.play().catch(e => {
+      console.log('自动播放需要用户交互，请点击播放按钮');
+    });
+  }
+}, 1000);
+})();
+
 </script>
