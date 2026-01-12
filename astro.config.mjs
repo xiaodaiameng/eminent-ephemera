@@ -6,10 +6,8 @@ import tailwind from '@astrojs/tailwind';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 
-// 移除 vercel 适配器导入（静态站点不需要）
-
 export default defineConfig({
-  site: 'https://hexentanz.cn',
+  site: 'https://eminent-ephemera-2szi.vercel.app',  // 使用你的vercel域名
   
   integrations: [
     react(),
@@ -17,6 +15,13 @@ export default defineConfig({
     mdx(),
     sitemap()
   ],
+  
+  output: 'static',  // 如果是静态站点
+  
+  // 如果是SSR，使用这个配置：
+  // output: 'server',
+  // adapter: vercel(),
+  
   devToolbar: {
     enabled: false
   },
@@ -26,7 +31,9 @@ export default defineConfig({
     rehypePlugins: [rehypeKatex]
   },
   
-  build: {
-    assets: '_astro',  // 默认值，可以保持
+  vite: {
+    build: {
+      assetsInlineLimit: 0  // 确保资源不被内联
+    }
   }
 });

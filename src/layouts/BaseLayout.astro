@@ -1,6 +1,6 @@
 ---
 // src/layouts/BaseLayout.astro
-import '../styles/global.css';
+import '../styles/global.css';  // 这里导入，Astro会处理
 import Loading from '@/components/layout/Loading.astro';
 import Header from '@/components/layout/Header.astro';
 import Footer from '@/components/layout/Footer.astro';
@@ -19,7 +19,6 @@ const { title = '女巫之舞', description = '女巫之舞，为你祈祷⭐' }
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content={description}>
-  <!-- SEO:Search Engine Optimization -->
   <meta name="keywords" content="花田随笔,个人生活,开发学习">
   <meta property="og:title" content={title}>
   <meta property="og:description" content={description}>
@@ -27,9 +26,14 @@ const { title = '女巫之舞', description = '女巫之舞，为你祈祷⭐' }
   <meta property="og:url" content={new URL(Astro.url.pathname, Astro.site).href}>
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/src/styles/global.css" />
-  <link rel="stylesheet" href="/node_modules/katex/dist/katex.min.css">
-
+  
+  <!-- 使用 KaTeX CDN，不要引用 node_modules -->
+  <link 
+    rel="stylesheet" 
+    href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+    integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV"
+    crossorigin="anonymous"
+  >
 </head>
 
 <body>
@@ -44,5 +48,3 @@ const { title = '女巫之舞', description = '女巫之舞，为你祈祷⭐' }
   <Sidebar />
 </body>
 </html>
-
-
