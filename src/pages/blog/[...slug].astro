@@ -1,16 +1,43 @@
 ---
 // src/pages/blog/[...slug].astro
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getEntry } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 // 正确的CSS导入方式
 import '../../styles/mddisplay.css';
 
-const { slug } = Astro.params;
-// 新方法：getEntry
-const entry = await getEntry('blog', slug);
-if (!entry) {
-  return Astro.redirect('/404');
+// 导出 getStaticPaths 函数来生成所有可能的路径
+export async function getStaticPaths() {
+  // 获取所有博客文章
+  const posts = await getCollection('blog');
+  
+  // 为每篇文章生成一个路径
+  return posts.map((post) => ({
+    params: { 
+      slug: post.slug 
+    },
+    props: {
+      // 预加载文章数据，避免在页面中重复获取
+      preloadedEntry: post
+    }
+  }));
 }
+
+// 从 Astro.props 获取预加载的文章数据
+const { preloadedEntry } = Astro.props;
+const { slug } = Astro.params;
+
+// 使用预加载的数据或者重新获取（为了保险）
+let entry;
+if (preloadedEntry) {
+  entry = preloadedEntry;
+} else {
+  entry = await getEntry('blog', slug);
+  if (!entry) {
+    return Astro.redirect('/404');
+  }
+}
+
+// 渲染文章内容
 const { Content } = await entry.render();
 ---
 

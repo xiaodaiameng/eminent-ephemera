@@ -17,10 +17,6 @@ export default defineConfig({
     mdx(),
     sitemap()
   ],
-  
-  // 完全移除 adapter 配置（使用纯静态模式）
-  // output 也移除，默认为 'static'
-  
   devToolbar: {
     enabled: false
   },

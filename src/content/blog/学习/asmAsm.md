@@ -45,7 +45,7 @@ AH（十位/进位寄存器） = 原来的AH + 1
 
  
 
-```assembly
+```asm
 DATA    SEGMENT    
 VAL1    BYTE '47'
 VAL2    BYTE '69'
@@ -108,7 +108,7 @@ END START
 
  
 
-```assembly
+```asm
 .MODEL	SMALL
 .STACK  	64
 .DATA
@@ -130,7 +130,7 @@ END
 
  
 
-```assembly
+```asm
 DISP	MACRO	STR
 MOV DX, OFFSET STR
 MOV AH, 9
@@ -165,7 +165,7 @@ END START
 
 #### 4.1 计算 `{10*(X+Y) - 3*(Z-1)} / 2`。
  
-```assembly
+```asm
 TITLE    EXAMPLE  PROGRAM
 DATA  SEGMENT	;设置数据段
 VARX	DW    123H	;变量X
@@ -204,7 +204,7 @@ END  START
 
 #### 5.1 基于固定值的跳转表法的（A+, A, A-, B+, B）。
  
-```assembly
+```asm
 .MODEL SMALL
 .DATA
 SCORE BYTE 60
@@ -253,7 +253,7 @@ END START
  
 #### 5.2 带输入的跳转表法。
  
-```assembly
+```asm
 DATA SEGMENT
 buf   db 3        ;缓冲区长度
 db ?        ;实际输入个数
@@ -344,7 +344,7 @@ END START
  
 #### 5.3 带输入的条件分支判断法。
  
-```assembly
+```asm
 DATA SEGMENT
   buf   db 3		;缓冲区长度
           db ?		;实际输入个数
@@ -413,7 +413,7 @@ END START
 - `D`：统计**其他字符**的个数
 
  
-```assembly
+```asm
 DATA SEGMENT
 A DB 0
 B DB 0
