@@ -81,7 +81,7 @@ a:hover {
 }
 
 main {
-  padding-top: 100px;
+  padding-top: 150px;
   padding-bottom: 60px;
   max-width: 800px;
   margin: 0 auto;
@@ -92,7 +92,7 @@ main {
 @media (max-width: 800px) {
   main {
     padding: 1rem;  /* 在小屏幕上简化为统一的padding */
-    padding-top: 80px;  /* 可能需要调整顶部padding */
+    padding-top: 100px;  /* 可能需要调整顶部padding */
     padding-bottom: 40px;
   }
   

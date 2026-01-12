@@ -38,192 +38,360 @@
   // 创建闭包内的私有变量
   let audio = null;
   let isPlaying = false;
+  let isInitialized = false;
+  let isFromNavigation = false; // 标记是否来自页面跳转
+  let currentSongFinished = false; // 标记当前歌曲是否已播放完毕
+  
   const musicList = [
-'/music/CallofSilence_pure.mp3',
-'/music/FarAwayfromHome.mp3',
-'/music/NormalNoMore_pure.mp3',
-'/music/OneLastKiss.mp3',
-'/music/世界那么大还是遇见你.mp3',
-'/music/世间美好与你环环相扣.mp3',
-'/music/你的名字.mp3',
-'/music/勇气.mp3',
-'/music/匆匆那年.mp3',
-'/music/千千阙歌.mp3',
-'/music/单车.mp3',
-'/music/博人传f2.mp3',
-'/music/博人传f3.mp3',
-'/music/博人传主题曲.mp3',
-'/music/告白之夜_pure.mp3',
-'/music/圣诞快乐劳伦斯先生.mp3',
-'/music/城南花已开_pure.mp3',
-'/music/天气之子.mp3',
-'/music/如果可以.mp3',
-'/music/如果的事.mp3',
-'/music/宾克斯的美酒.mp3',
-'/music/海贼王_风的去向.mp3',
-'/music/小美满.mp3',
-'/music/年轮.mp3',
-'/music/快乐的阳光_pure.mp3',
-'/music/情歌.mp3',
-'/music/我用什么把你留住.mp3',
-'/music/打上火花.mp3',
-'/music/敢问路在何方.mp3',
-'/music/有何不可.mp3',
-'/music/未闻花名.mp3',
-'/music/梁祝1_3pure.mp3',
-'/music/水星记_pure.mp3',
-'/music/海底_四国语言.mp3',
-'/music/火影忍者_萤之光.mp3',
-'/music/笑看风云.mp3',
-'/music/菊次郎的夏天_pure.mp3',
-'/music/雨天.mp3',
-'/music/人生何处不相逢.mp3',
-'/music/宾克斯的美酒中文版.mp3',
-'/music/鸟之诗.mp3'
-];
-let currentIndex = 0;
+    '/music/CallofSilence_pure.mp3',
+    '/music/FarAwayfromHome.mp3',
+    '/music/NormalNoMore_pure.mp3',
+    '/music/OneLastKiss.mp3',
+    '/music/世界那么大还是遇见你.mp3',
+    '/music/晴天.mp3',
+    '/music/世间美好与你环环相扣.mp3',
+    '/music/你的名字.mp3',
+    '/music/勇气.mp3',
+    '/music/匆匆那年.mp3',
+    '/music/千千阙歌.mp3',
+    '/music/单车.mp3',
+    '/music/博人传f2.mp3',
+    '/music/城南花已开_pure.mp3',
+    '/music/博人传f3.mp3',
+    '/music/博人传主题曲.mp3',
+    '/music/告白之夜_pure.mp3',
+    '/music/天气之子.mp3',
+    '/music/如果可以.mp3',
+    '/music/宾克斯的美酒.mp3',
+    '/music/如果的事.mp3',
+    '/music/海贼王_风的去向.mp3',
+    '/music/小美满.mp3',
+    '/music/年轮.mp3',
+    '/music/快乐的阳光_pure.mp3',
+    '/music/情歌.mp3',
+    '/music/我用什么把你留住.mp3',
+    '/music/打上火花.mp3',
+    '/music/敢问路在何方.mp3',
+    '/music/有何不可.mp3',
+    '/music/未闻花名.mp3',
+    '/music/梁祝1_3pure.mp3',
+    '/music/水星记_pure.mp3',
+    '/music/海底_四国语言.mp3',
+    '/music/火影忍者_萤之光.mp3',
+    '/music/笑看风云.mp3',
+    '/music/菊次郎的夏天_pure.mp3',
+    '/music/雨天.mp3',
+    '/music/人生何处不相逢.mp3',
+    '/music/鸟之诗.mp3'
+  ];
+  let currentIndex = 0;
+  
+  // 页面跳转标记
+  function markAsNavigation() {
+    isFromNavigation = true;
+    sessionStorage.setItem('music-from-navigation', 'true');
+    console.log('标记为页面跳转状态');
+  }
+  
+  // 检查是否来自页面跳转
+  function checkIfFromNavigation() {
+    const fromNav = sessionStorage.getItem('music-from-navigation') === 'true';
+    if (fromNav) {
+      console.log('检测到页面跳转，需要用户交互才能继续播放');
+      isFromNavigation = true;
+    }
+    return fromNav;
+  }
+  
   // 初始化音频
   function initAudio() {
-      if (audio) {
-        return;
+    if (isInitialized) {
+      return;
+    }
+    
+    // 检查是否来自页面跳转
+    const fromNavigation = checkIfFromNavigation();
+    
+    // 从本地存储恢复状态
+    try {
+      const savedState = localStorage.getItem('music-state');
+      const savedTime = localStorage.getItem('music-time');
+      const savedIndex = localStorage.getItem('music-index');
+      const savedFinished = localStorage.getItem('music-finished');
+      
+      if (savedIndex !== null) {
+        currentIndex = parseInt(savedIndex);
       }
-    if (!audio) {
+      
+      currentSongFinished = savedFinished === 'true';
+      
+      console.log('恢复状态:', { 
+        currentIndex, 
+        savedState, 
+        savedTime, 
+        currentSongFinished,
+        fromNavigation 
+      });
+      
+      // 创建音频对象
+      audio = new Audio(musicList[currentIndex]);
+      audio.loop = false;
+      audio.volume = 0.3;
+      isInitialized = true;
+      
+      // 设置播放时间点
+      if (savedTime && !currentSongFinished) {
+        audio.currentTime = parseFloat(savedTime);
+      }
+      
+      // 如果歌曲已播放完毕，加载但不播放
+      if (currentSongFinished) {
+        console.log('当前歌曲已播放完毕，等待播放下一首');
+        isPlaying = false;
+        updateButtonStyle(false);
+        
+        // 监听加载完成，然后暂停
+        audio.addEventListener('loadeddata', () => {
+          if (!audio.paused) {
+            audio.pause();
+          }
+        });
+        
+        audio.load();
+      } else {
+        // 歌曲未播放完毕
+        if (savedState === 'playing' && !fromNavigation) {
+          // 自动播放的情况
+          isPlaying = true;
+          updateButtonStyle(true);
+          setTimeout(() => {
+            audio.play().catch(e => {
+              console.log('自动播放需要用户交互:', e);
+              isPlaying = false;
+              updateButtonStyle(false);
+            });
+          }, 300);
+        } else if (savedState === 'playing' && fromNavigation) {
+          // 页面跳转过来的情况，暂停等待用户交互
+          isPlaying = false;
+          updateButtonStyle(false);
+          console.log('页面跳转状态，等待用户点击播放');
+        } else {
+          // 暂停状态
+          isPlaying = false;
+          updateButtonStyle(false);
+        }
+      }
+      
+    } catch (e) {
+      console.log('初始化失败:', e);
+      // 如果恢复失败，重新开始
       currentIndex = Math.floor(Math.random() * musicList.length);
       audio = new Audio(musicList[currentIndex]);
       audio.loop = false;
-      audio.volume = 0.3; // 音量
-      audio.addEventListener('ended', playNext); 
-      
-      // 从本地存储恢复状态
-      try {
-        const savedState = localStorage.getItem('music-state');
-        const savedTime = localStorage.getItem('music-time');
-        const savedIndex = localStorage.getItem('music-index');
-        if (savedState === 'playing') {
-          isPlaying = true;
-          if (savedIndex !== null) {
-      currentIndex = parseInt(savedIndex);
-      // 重新加载对应音乐
-      setTimeout(() => {
-        if (audio) {
-          audio.src = musicList[currentIndex];
-          audio.load();
-              // === 添加自动播放 ===
-          setTimeout(() => {
-            audio.play().catch(e => {
-              console.log('自动播放需要用户交互');
-            });
-          }, 300);
-        }
-      }, 100);
+      audio.volume = 0.3;
+      isInitialized = true;
+      isPlaying = false;
+      updateButtonStyle(false);
     }
-    if (savedTime) {
-      audio.currentTime = parseFloat(savedTime);
-    }
-    updateButtonStyle(true);
-    console.log('恢复播放状态');
-  }
-} catch (e) {
-  console.log('本地存储读取失败');
-}
-      
-      // 监听音频事件
-      audio.addEventListener('play', () => {
-        isPlaying = true;
-        updateButtonStyle(true);
-        localStorage.setItem('music-index', currentIndex.toString());
-        localStorage.setItem('music-state', 'playing');
-      });
-      
-      audio.addEventListener('pause', () => {
-        isPlaying = false;
-        updateButtonStyle(false);
+    
+    // 监听音频事件
+    audio.addEventListener('play', () => {
+      isPlaying = true;
+      currentSongFinished = false;
+      updateButtonStyle(true);
+      localStorage.setItem('music-state', 'playing');
+      localStorage.setItem('music-finished', 'false');
+      console.log('开始播放');
+    });
+    
+    audio.addEventListener('pause', () => {
+      isPlaying = false;
+      updateButtonStyle(false);
+      if (!audio.ended) {
         localStorage.setItem('music-state', 'paused');
-      });
-      
-      // 保存播放进度
-      audio.addEventListener('timeupdate', () => {
-        if (!audio.paused && audio.currentTime > 0) {
-          localStorage.setItem('music-time', audio.currentTime.toString());
-        }
-      });
-      
-      audio.addEventListener('error', (e) => {
-        console.error('音频错误:', e);
-        console.error('错误代码:', audio.error);
-      });
-    }
-  }
-// 播放下一首
-function playNext() {
-  currentIndex = (currentIndex + 1) % musicList.length;
-  if (audio) {
-    audio.src = musicList[currentIndex];
-    audio.load();
+      }
+      console.log('暂停播放');
+    });
     
-    if (isPlaying) {
-      setTimeout(() => {
-        audio.play().catch(e => {
-          console.log('自动播放下一首失败:', e);
-        });
-      }, 500);
+    audio.addEventListener('ended', () => {
+      console.log('歌曲播放完毕');
+      isPlaying = false;
+      currentSongFinished = true;
+      updateButtonStyle(false);
+      
+      // 保存完成状态
+      localStorage.setItem('music-state', 'paused');
+      localStorage.setItem('music-finished', 'true');
+      localStorage.removeItem('music-time'); // 清除时间，因为歌曲已结束
+      
+      // 等待用户点击播放下一首
+      console.log('歌曲已播放完毕，请点击播放按钮开始下一首');
+    });
+    
+    // 保存播放进度
+    audio.addEventListener('timeupdate', () => {
+      if (isPlaying && audio.currentTime > 0 && !currentSongFinished) {
+        localStorage.setItem('music-time', audio.currentTime.toString());
+        localStorage.setItem('music-index', currentIndex.toString());
+      }
+    });
+    
+    audio.addEventListener('error', (e) => {
+      console.error('音频错误:', e);
+      console.error('错误代码:', audio.error);
+    });
+  }
+  
+  // 播放下一首（只在歌曲播放完毕后调用）
+  function playNextSong() {
+    if (!currentSongFinished) {
+      console.log('当前歌曲还未播放完毕，不能播放下一首');
+      return;
     }
     
-    console.log('切换到下一首:', musicList[currentIndex]);
-    localStorage.setItem('music-index', currentIndex.toString());
-    localStorage.removeItem('music-time'); // 新歌清除时间
+    currentIndex = (currentIndex + 1) % musicList.length;
+    currentSongFinished = false;
+    
+    console.log('开始播放下一首:', musicList[currentIndex]);
+    
+    // 停止当前音频
+    if (audio) {
+      audio.pause();
+    }
+    
+    // 创建新的音频对象
+    audio = new Audio(musicList[currentIndex]);
+    audio.loop = false;
+    audio.volume = 0.3;
+    
+    // 重置事件监听器
+    audio.addEventListener('play', () => {
+      isPlaying = true;
+      currentSongFinished = false;
+      updateButtonStyle(true);
+      localStorage.setItem('music-state', 'playing');
+      localStorage.setItem('music-index', currentIndex.toString());
+      localStorage.setItem('music-finished', 'false');
+      console.log('开始播放下一首');
+    });
+    
+    audio.addEventListener('pause', () => {
+      isPlaying = false;
+      updateButtonStyle(false);
+      if (!audio.ended) {
+        localStorage.setItem('music-state', 'paused');
+      }
+    });
+    
+    audio.addEventListener('ended', () => {
+      console.log('歌曲播放完毕');
+      isPlaying = false;
+      currentSongFinished = true;
+      updateButtonStyle(false);
+      localStorage.setItem('music-state', 'paused');
+      localStorage.setItem('music-finished', 'true');
+      localStorage.removeItem('music-time');
+      console.log('歌曲已播放完毕，请点击播放按钮开始下一首');
+    });
+    
+    audio.addEventListener('timeupdate', () => {
+      if (isPlaying && audio.currentTime > 0 && !currentSongFinished) {
+        localStorage.setItem('music-time', audio.currentTime.toString());
+      }
+    });
+    
+    // 播放新歌曲
+    audio.play().catch(error => {
+      console.log('播放失败:', error);
+      isPlaying = false;
+      updateButtonStyle(false);
+    });
   }
-}
+  
   // 更新按钮样式
   function updateButtonStyle(playing) {
     button.style.background = playing ? 'rgba(255, 174, 174, 0.4)' : 'white';
     button.style.borderColor = playing ? 'rgba(255, 174, 174, 0.8)' : 'rgba(255, 174, 174, 0.443)';
+    button.textContent = '🎵';
   }
   
   // 播放/暂停音乐
   function toggleMusic() {
-    if (!audio) {
+    if (!isInitialized) {
       initAudio();
     }
     
-    if (isPlaying) {
-      // 暂停音乐
-      audio.pause();
-    } else {
+    // 清除页面跳转标记（用户已交互）
+    if (isFromNavigation) {
+      isFromNavigation = false;
+      sessionStorage.removeItem('music-from-navigation');
+      console.log('清除页面跳转标记，用户已交互');
+    }
+    
+    if (currentSongFinished) {
+      // 当前歌曲已播放完毕，播放下一首
+      console.log('播放下一首歌曲');
+      playNextSong();
+    }else {
       // 播放音乐
       audio.play().catch(error => {
         console.log('播放失败:', error);
-        
-        // 显示提示
-        button.style.background = '#ffcccc';
-        button.textContent = '⚠️';
-        setTimeout(() => updateButtonStyle(false), 1000);
-        
         // 提示用户
         if (error.name === 'NotAllowedError') {
-          alert('请先点击页面其他位置，然后再点击播放按钮');
+          button.style.background = '#ffcccc';
+          button.textContent = '🔇';
+          setTimeout(() => updateButtonStyle(false), 1000);
         }
       });
     }
   }
   
+  // 页面卸载时保存状态并暂停
+  function handleBeforeUnload() {
+    console.log('页面卸载，保存状态并暂停');
+    
+    // 标记为页面跳转
+    markAsNavigation();
+    
+    if (audio) {
+      // 保存当前播放进度
+      if (!currentSongFinished && audio.currentTime > 0) {
+        localStorage.setItem('music-time', audio.currentTime.toString());
+      }
+      localStorage.setItem('music-index', currentIndex.toString());
+      localStorage.setItem('music-state', isPlaying ? 'playing' : 'paused');
+      localStorage.setItem('music-finished', currentSongFinished ? 'true' : 'false');
+      
+      // 暂停音乐
+      if (!audio.paused) {
+        audio.pause();
+        console.log('页面跳转，暂停音乐');
+      }
+    }
+  }
+  
+  // 初始化
+  initAudio();
+  
   // 绑定点击事件
   button.addEventListener('click', toggleMusic);
   
-  // 初始化按钮样式
-  updateButtonStyle(false);
+  // 监听页面卸载
+  window.addEventListener('beforeunload', handleBeforeUnload);
   
-// 立即初始化音频
-initAudio();
-
-// 尝试自动播放，但浏览器似乎不支持s
-setTimeout(() => {
-  if (audio && isPlaying && audio.paused) {
-    audio.play().catch(e => {
-      console.log('自动播放需要用户交互，请点击播放按钮');
-    });
-  }
-}, 1000);
+  // 监听页面可见性变化
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && audio && !audio.paused) {
+      console.log('页面隐藏，保存状态');
+      // 页面不可见时，保存当前状态
+      localStorage.setItem('music-time', audio.currentTime.toString());
+    }
+  });
+  
+  // 初始化按钮样式
+  updateButtonStyle(isPlaying);
+  
+  console.log('音乐播放器初始化完成');
 })();
-
 </script>

@@ -1,0 +1,45 @@
+---
+// src/pages/blog/社交.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import '@/styles/blog.css';
+---
+
+<BaseLayout>
+  <div class="content-container">
+    <div class="article-image">
+      <img src="/images/fulilian.jpg" alt="社交" />
+    </div>
+    
+    <br><br><br>
+    
+    <table class="subject-table">
+      <p style="color: #000000; margin: 0;">社会</p> 
+      <tr class="table-row">
+        <td class="table-cell">
+          <img src="/images/maomihewangzai.jpg" alt="ali" class="table-image"/>
+        </td>
+        <td class="table-cell">
+          <h2 class="table-title">
+            <a href="/blog/社交/social_community" class="table-link">social_community</a>
+          </h2>
+        </td>
+      </tr>
+    </table>
+    
+    <br><br><br>
+    
+    <table class="subject-table">
+      <p style="color: #000000; margin: 0;">家庭</p> 
+      <tr class="table-row">
+        <td class="table-cell">
+          <img src="/images/比格多栋一家.jpg" alt="girltouxiang" class="table-image"/>
+        </td>
+        <td class="table-cell">
+          <h2 class="table-title">
+            <a href="/blog/社交/family_relationships" class="table-link">family_relationships</a>
+          </h2>
+        </td>
+      </tr>
+    </table>
+  </div>
+</BaseLayout>

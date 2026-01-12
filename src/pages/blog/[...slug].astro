@@ -2,26 +2,31 @@
 // src/pages/blog/[...slug].astro
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getEntry } from 'astro:content';
+// 正确的CSS导入方式
+import '../../styles/mddisplay.css';
 
 const { slug } = Astro.params;
-
 // 新方法：getEntry
 const entry = await getEntry('blog', slug);
-
 if (!entry) {
   return Astro.redirect('/404');
 }
-
 const { Content } = await entry.render();
 ---
 
 <BaseLayout title={entry.data.title}>
-  <main class="max-w-3xl mx-auto px-4 py-16">
-    <article>
-      <h1 class="text-3xl font-bold mb-6">{entry.data.title}</h1>
-      <div class="prose prose-lg max-w-none">
-        <Content />
-      </div>
-    </article>
-  </main>
+  <div class="article-container">
+    <main class="max-w-3xl mx-auto px-4 py-16">
+      <article>
+        <div class="markdown-wrapper">
+          <div class="markdown-content">
+            <h1 class="text-3xl font-bold mb-6">{entry.data.title}</h1>
+            <div class="prose prose-lg max-w-none">
+              <Content />
+            </div>
+          </div>
+        </div>
+      </article>
+    </main>
+  </div>
 </BaseLayout>

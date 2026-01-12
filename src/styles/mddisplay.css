@@ -1,0 +1,222 @@
+/* src/styles/mddisplay.css */
+
+/* 主容器 - 圆角透明背景 */
+.article-container {
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* 内容包装器 */
+.markdown-wrapper {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Markdown内容容器 - 圆角透明效果（移除了毛玻璃） */
+.markdown-content {
+  background: rgba(255, 255, 255, 0.95); /* 更不透明的背景 */
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2); /* 更明显的边框 */
+  padding: 3rem;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 暗色主题适配 */
+[data-theme="dark"] .markdown-content {
+  background: rgba(30, 30, 40, 0.98); /* 暗色模式下更不透明 */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+}
+
+/* 添加这段代码来显示列表标号 */
+.markdown-content .prose ul {
+  list-style-type: disc !important;
+}
+
+.markdown-content .prose ol {
+  list-style-type: decimal !important;
+}
+
+.markdown-content .prose li {
+  display: list-item !important;
+  margin-left: 1.5em !important;
+}
+
+/* 添加装饰性渐变边框效果 */
+.markdown-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    #3b82f6, 
+    #8b5cf6, 
+    #ec4899, 
+    #3b82f6
+  );
+  background-size: 300% 100%;
+  animation: gradient-border 3s ease infinite;
+  border-radius: 24px 24px 0 0;
+  z-index: 1;
+}
+
+@keyframes gradient-border {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 标题样式 */
+.markdown-content h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(59, 130, 246, 0.2);
+  position: relative;
+}
+
+.markdown-content h1::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, transparent);
+}
+
+/* Prose 内容样式调整 */
+.markdown-content .prose h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1.2rem;
+}
+
+.markdown-content .prose h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.markdown-content .prose p {
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.markdown-content .prose a {
+  text-decoration: none;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+  transition: all 0.2s ease;
+}
+
+.markdown-content .prose a:hover {
+  border-bottom-color: #3b82f6;
+}
+
+.markdown-content .prose code {
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.9em;
+}
+
+.markdown-content .prose pre {
+  border-radius: 12px;
+  padding: 1.5rem;
+  overflow-x: auto;
+  margin: 1.8rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.markdown-content .prose blockquote {
+  border-left: 4px solid #3b82f6;
+  padding: 1.2rem 1.8rem;
+  margin: 2rem 0;
+  background: rgba(59, 130, 246, 0.05);
+  border-radius: 0 12px 12px 0;
+  font-style: italic;
+}
+
+[data-theme="dark"] .markdown-content .prose blockquote {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.markdown-content .prose ul, 
+.markdown-content .prose ol {
+  padding-left: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.markdown-content .prose li {
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+.markdown-content .prose hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(59, 130, 246, 0.3), 
+    transparent
+  );
+  margin: 2.5rem 0;
+}
+
+/* 图片样式 */
+.markdown-content .prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin: 1.5rem 0;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .markdown-content .prose img {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .article-container {
+    padding: 0.5rem;
+  }
+  
+  .markdown-content {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+  
+  .markdown-content h1 {
+    font-size: 2rem;
+  }
+  
+  .markdown-content .prose pre {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .markdown-content {
+    padding: 1.2rem;
+    border-radius: 12px;
+  }
+  
+  .markdown-content h1 {
+    font-size: 1.8rem;
+  }
+  
+  .markdown-content::before {
+    height: 3px;
+  }
+}

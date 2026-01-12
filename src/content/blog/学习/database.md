@@ -1,210 +1,34 @@
 ---
 title: '数据库'
-
 ---
 
 
+数据库网络相关
 
-#### 关系代数表达式
+1. 数据库里一张表不能同时拥有多个表空间，也无法在使用时切换。
 
+2. 高频访问的索引/表放 SSD提升性能，低频的放机械硬盘，优化存储和性能。
 
+3. 表空间对应的文件系统目录不需要用户有读写权限，通常是数据库服务进程才需要权限，普通用户不需要直接操作这个目录。
 
-题目一：
+4. 可在其他分区创建新的表空间。
 
-$STUDENT( \underline{学号},姓名,性别,\text{班级号}_{\sim\sim})\\$
+   
 
-$CLASS( \underline{班级号},所在院系,所属专业,$
 
-$班长学号)$
 
-$LESSON( \underline{课程号},课程名,教材名,学分)\\$
+mysql部分
 
-$TEACHER( \underline{教师编号},姓名,所在院系 )\\$
-
-$SELECTION( \underline{\text{班级号}_{\sim\sim}, \text{课程号}_{\sim\sim}},\text{教师编号}_{\sim\sim},$
-
-$ \text{上课年度}, \text{上课学期})\\$
-
-$GRADE(\underline{\text{学号}_{\sim\sim}, \text{课程号}_{\sim\sim}},分数 )\\$
-
-试用关系代数表达式表达如下查询操作：
-
-（1）查询“数据库”课程的课程号及相应教材名。
-
-（2）查询所有班长的学号、姓名、所在班级号和所属专业。
-
-（3）查询选修了“数据库”或”软件工程“课程的班级号和所示专业。
-
-（4）查询学过“陈卫”老师讲过的“数据结构”课程的班级号和上课年度。
-
-（5）查询至少选修了“王武”同学所学过所有课程的学生学号。
-
-（6）查询“软件学院”没讲授过“数据库”课程的教师编号。
-
-（7）查询2020年度讲授过两门或两门以上课程的教师编号和所讲授的课程号。
-
-
-
-答：
-
-<br>
-
-$\pi_{\text{课程号,教材名}}\left(\sigma_{\text{课程名='数据库'}}(LESSION)\right)$
-
-<br>
-
-$\pi_{\text{学号,姓名,班级号,所属专业}}(STUDENT \bowtie$
-
-$_{\text{STUDENT.学号=CLASS.班长学号}}CLASS)$
-
-<br>
-
-  $DB\_SE \leftarrow \sigma_{\text{课程名=‘数据库’}\lor\,\text{课程名=‘软件工程’}}(LESSON)$
-
-$\pi_{\text{班级号,所属专业}}(SELECTION \bowtie CLASS \bowtie DB\_SE )$
-
-<br>
-
-$\pi_{\text{班级号,上课年度}}(\sigma_{\text{姓名='陈卫'}\wedge \text{课程名='数据结构'}}$
-
-$(SELECTION \bowtie TEACHER \bowtie LESSON))$
-
-<br>
-
- $WW\_Sno \leftarrow \pi_{\text{学号}}(\sigma_{\text{姓名='王武'}}(STUDENT))$
-
-$\pi_{\text{学号,课程号}}(GRADE)\div\pi_{\text{课程号}}(GRADE \bowtie WW\_Sno)$
-
-<br>
-
-$\pi_{\text{教师编号}}(\sigma_{\text{所在院系='软件学院'}}(TEACHER)) - \pi_{\text{教师编号}}( SELECTION \bowtie \sigma_{课程名='数据库'}(LESSON))$
-
-<br>$\pi_{\text{S1.教师编号, S1.课程号}}(
-\sigma_{\text{S1.课程号} \neq \text{S2.课程号} \wedge\text{S1.上课年度}=2020 \wedge\text{S2.上课年度}=2020}(\\
-\rho_{S1}(\text{SELECTION}) 
-\bowtie _{\text{S1.教师编号} = \text{S2.教师编号}} 
-\rho_{S2}(\text{SELECTION})
-))$
-
-
-
-题目二：
-
-$S(\underline{SNO},SNAME,STATUS,CITY )$
-$P(\underline{PNO}, PNAME,COLOR,WEIGHT )$
-$J(\underline{JNO},JNAME,CITY )$
-$SPJ(\underline{SNO_{\sim\sim},PNO_{\sim\sim},JNO_{\sim\sim}},QTY )$
-其中：
-(1)供应商关系S
-(2)零部件关系P
-(3)工程项目关系J
-(4)供应情况关系SPJ
-
-数据库参考实例值如下图所示,请用关系代数表达式表达如下查询操作：
-
-（1）查询上海供应商供应的所有零部件的代码。
-
-（2）查询上海供应商供应的所有零部件的工程项目名称。
-
-（3）查询给项目代码为J1的工程\;供应代码为 P1 的零部件的供应商代码。
-
-（4）查询给项目代码为J1的工程供应红色零部件的供应商代码。
-
-（5）查询项目代码为J2的工程使用的各种零部件的名称及其数量。
-
-（6）查询没有使用天津供应商供应的零部件的工程项目代码。
-
-（7）查询至少使用了供应商代码为S1的供应商所供应的全部零部件的工程项目代码。
-
-
-
-答:
-
-$ \pi_{PNO}(\sigma_{CITY='\text{上海}'}(S) \bowtie SPJ ) $
-
-
-
- $\pi_{JAMNE}(\sigma_{CITY='\text{上海}'}(S) \bowtie SPJ \bowtie J) $
-
-
-
- $\pi_{SNO}(\sigma_{JNO='J1' \wedge PNO='P1' }(SPJ))$
-
-
-
-$ \pi_{SNO}(\sigma_{COLOR='\text{红}'}(P) \bowtie \sigma_{JNO='J1'}(SPJ)) $
-
-
-
- $\pi_{PNAME,QTY}(\sigma_{JNO='J2'}(SPJ) \bowtie P) $
-
-
-
-$ \pi_{JNO}(J)-\;\;\;\pi_{JNO}(\pi_{JNO}(\sigma_{CITY=\text{'天津'}}(S)) \bowtie SPJ) $
-
-
-
-
-$ \pi_{JNO,PNO}(SPJ) \div \pi_{PNO}(\sigma_{SNO='S1'}(SPJ)) $
-
-
-
-题目三：
-
-$Department(\underline{Dept\_No},Dept\_Name,Location)$
-$Employee(\underline{Emp\_No},Emp\_Name,Dept\_No)$
-$Project(\underline{Pro\_No},Pro\_Name,Budget)$
-$Works(\underline{Emp\_No_{\sim\sim}, Pro\_No_{\sim\sim}}, Job)$
-
-试分别用关系代数表达式表达如下查询操作：
-
-（1）查询参与预算大于500万元的工程项目的员工所在部门编号。
-
-（2）查询员工“王广”和“王丽”都参与的预算超过10万元的工程项目名称。
-
-（3）查询所在部门编号为D2的员工没有参与的工程项目编号及名称。
-
-（4）查询所有部门都参与的工程项目编号和名称。
-
-
-
-答:
-
- $ \pi_{Dept\_No}(\sigma_{Budget>500}(Work \Join Project \Join Employee)) $
-
-
-
-$\pi_{Pro\_Name}(\pi_{Pro\_No,Pro\_Name}(\sigma_{Budget>10 \wedge \text{Emp\_Name = ‘王广’}}(Works \bowtie Project \Join Employee))$
-
-$\cap \;\;\pi_{Pro\_No,Pro\_Name}(\sigma_{Budget>10 \wedge \text{Emp\_Name = ‘王丽’}}(Works \bowtie Project \Join Employee))$
-
-
-$\pi_{Pro\_No,Pro\_Name}(Project) - \pi_{Pro\_No,Pro_Name}(\sigma_{Emp\_No='D2'}(Employee \Join Work \Join Project)$
-
-
-
-
- $\pi_{Pro\_No,Pro\_Name,Dept\_No}(Project\Join Employee \Join Works) \div \pi_{Dept\_No}(Department)$
-
-<br>
-
-sql部分
-
-前言：
-
-#### 打包数据命令：
+#### 打包数据命令：（在命令行）
 
 `mysqldump -u root -p --databases dbName >D:\dbname2.sql`
 
 #### 还原数据命令：
 
-在命令行：
 `mysql -u root -p < D:\dbname2.sql`
 
-在mysql里：
-`SOURCE D:/dbname.sql`
+在mysql里：`SOURCE D:/dbname.sql`
 
-正文：
 
 #### 一、数据库
 

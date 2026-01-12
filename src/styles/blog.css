@@ -1,0 +1,207 @@
+/* src/styles/blog.css */
+
+/* 容器样式，提供舒适的边距 */
+.content-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* 文章图片样式 */
+/* 移除高度限制，完全自适应 */
+.article-image {
+  width: 100%;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+  overflow: hidden; /* 保持圆角效果 */
+}
+
+.article-image img {
+  width: 100%;
+  height: auto; /* 保持图片原始比例 */
+  display: block;
+  object-fit: contain;
+}
+
+/* 表格整体样式 */
+.subject-table {
+  width: 100%; 
+  border-collapse: separate; 
+  border-spacing: 0;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0, 123, 255, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* 表格悬停效果 */
+.subject-table:hover {
+  box-shadow: 0 8px 32px rgba(0, 123, 255, 0.15);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+/* 表格行样式 - 蓝色半透明分隔线 */
+.table-row {
+  border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+  transition: background-color 0.2s ease;
+}
+
+.table-row:last-child {
+  border-bottom: none;
+}
+
+.table-row:hover {
+  background-color: rgba(59, 130, 246, 0.03);
+}
+
+/* 单元格样式 */
+.table-cell {
+  padding: 20px;
+  vertical-align: middle;
+}
+
+.table-cell:first-child {
+  width: 30%;
+  text-align: center;
+}
+
+.table-cell:last-child {
+  width: 70%;
+}
+
+/* 表格内图片样式 */
+.table-image {
+  width: 100%;
+  max-width: 160px;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.table-row:hover .table-image {
+  transform: scale(1.03);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 标题样式 */
+.table-title {
+  margin: 0 0 12px 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* 链接样式 */
+.table-link {
+  color: #1a56db;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: inline-block;
+  position: relative;
+  padding-bottom: 2px;
+}
+
+.table-link:hover {
+  color: #1e429f;
+}
+
+.table-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6, #6366f1);
+  transition: width 0.3s ease;
+}
+
+.table-link:hover::after {
+  width: 100%;
+}
+
+/* 描述文字样式 */
+.table-desc {
+  color: #6b7280;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .content-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  .table-cell {
+    padding: 16px 12px;
+  }
+  
+  .table-title {
+    font-size: 1.2rem;
+  }
+  
+  .table-image {
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-container {
+    padding: 1rem;
+  }
+  
+  .subject-table {
+    border-radius: 8px;
+  }
+  
+  .table-cell:first-child {
+    width: 40%;
+  }
+  
+  .table-cell:last-child {
+    width: 60%;
+  }
+  
+  .table-image {
+    max-width: 100px;
+  }
+}
+
+/* 暗色主题适配 */
+@media (prefers-color-scheme: dark) {
+  .subject-table {
+    background-color: #1f2937;
+    border-color: rgba(59, 130, 246, 0.2);
+  }
+  
+  .table-row {
+    border-bottom-color: rgba(59, 130, 246, 0.1);
+  }
+  
+  .table-row:hover {
+    background-color: rgba(59, 130, 246, 0.05);
+  }
+  
+  .table-title {
+    color: #f3f4f6;
+  }
+  
+  .table-link {
+    color: #60a5fa;
+  }
+  
+  .table-link:hover {
+    color: #93c5fd;
+  }
+  
+  .table-desc {
+    color: #9ca3af;
+  }
+}

@@ -1,0 +1,87 @@
+---
+// src/pages/blog/学习.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import '@/styles/blog.css';
+---
+
+<BaseLayout>
+  <div class="content-container">
+    <div class="article-image">
+      <img src="/images/xiaohei.jpg" alt="学习" />
+    </div>
+    
+    <br><br><br>
+    
+    <table class="subject-table">
+      <p style="color: #000000; margin: 0;">大二下</p> 
+      <tr class="table-row">
+        <td class="table-cell">
+          <img src="/images/jiyi.jpg" alt="jiyi" class="table-image"/>
+        </td>
+        <td class="table-cell">
+          <h2 class="table-title">
+            <a href="/blog/学习/computernetwork" class="table-link">计算机网络</a>
+          </h2>
+          <p class="table-desc">continue</p>
+        </td>
+      </tr>
+      <tr class="table-row">
+        <td class="table-cell">
+          <img src="/images/bigeduodong2.jpg" alt="数据库" class="table-image"/>
+        </td>
+        <td class="table-cell">
+          <h2 class="table-title">
+            <a href="/blog/学习/database" class="table-link">数据库</a>
+          </h2>
+          <p class="table-desc">continue</p>
+        </td>
+      </tr>
+    </table>
+    
+    <br><br><br>
+    
+    <table class="subject-table">
+      <p style="color: #666; margin: 0;">大二上</p> 
+      <tr class="table-row">
+        <td class="table-cell">
+          <img src="/images/xiuzhen.jpg" alt="xiuzhen" class="table-image"/>
+        </td>
+        <td class="table-cell">
+          <h2 class="table-title">
+            <a href="/blog/学习/huaweinetwork" class="table-link">ict</a>
+          </h2>
+        </td>
+      </tr>
+      <tr class="table-row">
+        <td class="table-cell">
+          <img src="/images/xianluomao.jpg" alt="xiaoba" class="table-image"/>
+        </td>
+        <td class="table-cell">
+          <h2 class="table-title">
+            <a href="/blog/学习/english" class="table-link">英语作文</a>
+          </h2>
+        </td>
+      </tr>
+      <tr class="table-row">
+        <td class="table-cell">
+          <img src="/images/xiaoba.png" alt="汇编语言" class="table-image"/>
+        </td>
+        <td class="table-cell">
+          <h2 class="table-title">
+            <a href="/blog/学习/asmasm" class="table-link">汇编</a>
+          </h2>
+        </td>
+      </tr>
+      <tr class="table-row">
+        <td class="table-cell">
+          <img src="/images/wusaqi.png" alt="wusaqi" class="table-image"/>
+        </td>
+        <td class="table-cell">
+          <h2 class="table-title">
+            <a href="/blog/学习/marxism" class="table-link">马原</a>
+          </h2>
+        </td>
+      </tr>
+    </table>
+  </div>
+</BaseLayout>

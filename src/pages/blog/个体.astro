@@ -1,0 +1,45 @@
+---
+// src/pages/blog/个体.astro
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import '@/styles/blog.css';
+---
+
+<BaseLayout>
+  <div class="content-container">
+    <div class="article-image">
+      <img src="/images/aniya.jpg" alt="个体" />
+    </div>
+    
+    <br><br><br>
+    
+    <table class="subject-table">
+      <p style="color: #000000; margin: 0;">19</p> 
+      <tr class="table-row">
+        <td class="table-cell">
+          <img src="/images/ali.jpg" alt="ali" class="table-image"/>
+        </td>
+        <td class="table-cell">
+          <h2 class="table-title">
+            <a href="/blog/个体/somethingnormal" class="table-link">somethingNormal</a>
+          </h2>
+        </td>
+      </tr>
+    </table>
+    
+    <br><br><br>
+    
+    <table class="subject-table">
+      <p style="color: #000000; margin: 0;">18</p> 
+      <tr class="table-row">
+        <td class="table-cell">
+          <img src="/images/girltouxiang.jpg" alt="girltouxiang" class="table-image"/>
+        </td>
+        <td class="table-cell">
+          <h2 class="table-title">
+            <a href="/blog/个体/oldwrites" class="table-link">oldwrites</a>
+          </h2>
+        </td>
+      </tr>
+    </table>
+  </div>
+</BaseLayout>

@@ -1,0 +1,210 @@
+---
+// src/components/layout/Sidebar.astro
+import '../../styles/sidebar.css';
+---
+
+<button 
+  id="heart-btn"
+  style="
+    position: fixed;
+    bottom: 8.5rem;
+    right: 1rem;
+    z-index: 50;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: none;
+    background: rgba(239, 68, 68, 0.1);
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(255, 230, 230, 0.902);
+  "
+  aria-label="查看人"
+  title="查看人"
+>
+  🍎
+</button>
+
+<!-- 个人信息模态框 -->
+<div id="profile-modal" class="profile-modal">
+  <div class="modal-overlay" id="modal-overlay"></div>
+  <div class="modal-content">
+    <!-- 关闭按钮 -->
+    <button class="modal-close" id="modal-close" aria-label="关闭">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+    
+    <!-- 头像和用户名 -->
+    <div class="profile-header">
+      <div class="avatar-container">
+        <img src="/images/shuangquanmiao.jpg" alt="User Avatar" class="avatar-image"/>
+      </div>
+      <div class="user-info">
+        <h2 class="username">nihao</h2>
+        <p class="user-bio">欢迎来到我的博客空间</p>
+      </div>
+    </div>
+    
+    <a href="https://github.com/xiaodaiameng/eminent-ephemera" class="edit-profile-btn" style="display: block; text-align: center;"
+    >
+    点击跳转至项目 GitHub 地址</a>
+    
+    <!-- 友链部分 -->
+    <div class="friends-section">
+      <div class="section-title">
+        <span class="icon">📍</span>
+        <span>友链</span>
+      </div>
+      
+      <!-- 可滚动的友链列表 -->
+      <div class="friends-list-container">
+        <div class="friends-list">
+          <!-- 友链1 -->
+          <a href="#" class="friend-item friend-placeholder">
+            <div class="friend-avatar">
+              <img src="/images/bigeduodong.png" alt="朋友头像" />
+            </div>
+            <span class="friend-name">朋友1</span>
+          </a>
+          
+          <!-- 友链2 -->
+          <a href="#" class="friend-item friend-placeholder">
+            <div class="friend-avatar">
+              <img src="/images/bigeduodong.png" alt="朋友头像" />
+            </div>
+            <span class="friend-name">朋友2</span>
+          </a>
+          
+          <!-- 友链3 -->
+          <a href="#" class="friend-item friend-placeholder">
+            <div class="friend-avatar">
+              <img src="/images/bigeduodong.png" alt="朋友头像" />
+            </div>
+            <span class="friend-name">朋友3</span>
+          </a>
+          
+          <!-- 友链4 -->
+          <a href="#" class="friend-item friend-placeholder">
+            <div class="friend-avatar">
+              <img src="/images/bigeduodong.png" alt="朋友头像" />
+            </div>
+            <span class="friend-name">朋友4</span>
+          </a>
+          
+          <!-- 友链5 -->
+          <a href="#" class="friend-item friend-placeholder">
+            <div class="friend-avatar">
+              <img src="/images/bigeduodong.png" alt="朋友头像" />
+            </div>
+            <span class="friend-name">朋友5</span>
+          </a>
+          
+          <!-- 友链6 -->
+          <!-- <a href="https://baidu.com" class="friend-item" target="_blank" rel="noopener"> -->
+           <a href="#" class="friend-item friend-placeholder">
+            <div class="friend-avatar">
+              <img src="/images/bigeduodong.png" alt="朋友头像" />
+            </div>
+            <span class="friend-name">朋友6</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 自定义消息模态框（移动到最外层） -->
+<div id="custom-alert" class="custom-alert">
+  <div class="alert-content">
+    <div class="alert-header">
+      <h3>友情提示</h3>
+      <button class="alert-close">×</button>
+    </div>
+    <div class="alert-body">
+      <p>哎呀，主包的博客还没有朋友呢，快来加入我的友链队伍吧！</p>
+    </div>
+    <div class="alert-footer">
+      <button class="alert-confirm">好的</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 获取元素
+  const heartBtn = document.getElementById('heart-btn');
+  const profileModal = document.getElementById('profile-modal');
+  const modalOverlay = document.getElementById('modal-overlay');
+  const modalClose = document.getElementById('modal-close');
+  
+  // 显示/隐藏模态框
+  function toggleProfileModal() {
+    profileModal.classList.toggle('active');
+    document.body.style.overflow = profileModal.classList.contains('active') ? 'hidden' : '';
+  }
+  
+  // 按钮点击事件
+  heartBtn.addEventListener('click', toggleProfileModal);
+  
+  // 关闭模态框
+  modalOverlay.addEventListener('click', toggleProfileModal);
+  modalClose.addEventListener('click', toggleProfileModal);
+  
+  // ESC键关闭模态框
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && profileModal.classList.contains('active')) {
+      toggleProfileModal();
+    }
+  });
+  
+  // 点击模态框外部关闭
+  profileModal.addEventListener('click', (e) => {
+    if (e.target === profileModal) {
+      toggleProfileModal();
+    }
+  });
+  
+  // 自定义告警框逻辑
+  document.addEventListener('DOMContentLoaded', function() {
+    const placeholderLinks = document.querySelectorAll('.friend-placeholder');
+    const customAlert = document.getElementById('custom-alert');
+    const alertClose = customAlert.querySelector('.alert-close');
+    const alertConfirm = customAlert.querySelector('.alert-confirm');
+    
+    placeholderLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        customAlert.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+    
+    function closeAlert() {
+      customAlert.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+    
+    alertClose.addEventListener('click', closeAlert);
+    alertConfirm.addEventListener('click', closeAlert);
+    
+    customAlert.addEventListener('click', function(e) {
+      if (e.target === customAlert) {
+        closeAlert();
+      }
+    });
+    
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && customAlert.classList.contains('show')) {
+        closeAlert();
+      }
+    });
+  });
+</script>

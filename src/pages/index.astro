@@ -21,18 +21,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <br>
       <br>
       <br>
+      <div class="flex flex-wrap gap-4 justify-center">
 
-      <br>
-      <a href="/blog" 
-        class="inline-block px-8 py-3 text-white text-lg font-medium rounded-lg transition-all duration-300 hover:scale-105"
-        style="
-          background: linear-gradient(135deg, #c6fbff 0%, #cf9fffd2 100%);
-          color: #ffffff;
-          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        "
->
-  查看所有文章 →
-</a>
+
+        <a href="/blog" 
+          class="inline-block px-8 py-3 text-white text-lg font-medium rounded-lg transition-all duration-300 hover:scale-105"
+          style="
+            background: linear-gradient(135deg, #c6fbff 0%, #cf9fffd2 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+          ">
+          查看归档 →
+          </a>
+        <a href="/oldblogpages" 
+          class="inline-block px-8 py-3 text-white text-lg font-medium rounded-lg transition-all duration-300 hover:scale-105"
+          style="
+            background: linear-gradient(135deg, #f5deff 0%, #ff7d7dd2 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+          ">
+          查看博客 →
+          </a>
+      </div>
     </div>
   </main>
 </BaseLayout>

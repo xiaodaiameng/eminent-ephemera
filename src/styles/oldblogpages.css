@@ -1,0 +1,327 @@
+/* 博客主页的每日语录与图片轮播样式 */
+
+ /* 每日语录样式 */
+  .quote-container {
+    position: relative;
+    margin: 2rem auto;
+    max-width: 800px;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+      0 4px 20px rgba(0, 0, 0, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  /* 暗色主题适配 */
+  [data-theme="dark"] .quote-container {
+    background: rgba(30, 30, 40, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 
+      0 4px 20px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .quote-text {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: var(--text-color, #2c3e50);
+    font-style: italic;
+    text-align: center;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    padding: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  /* 暗色主题文字颜色 */
+  [data-theme="dark"] .quote-text {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* 引号装饰 */
+  .quote-text::before,
+  .quote-text::after {
+    font-size: 2.5rem;
+    color: rgba(59, 130, 246, 0.3);
+    font-family: Georgia, serif;
+    line-height: 1;
+  }
+
+  .quote-text::before {
+    content: "「";
+    margin-right: 0.5rem;
+    vertical-align: top;
+  }
+
+  .quote-text::after {
+    content: "」";
+    margin-left: 0.5rem;
+    vertical-align: bottom;
+  }
+
+  /* 分隔线 */
+  .quote-container hr {
+    margin: 1.5rem auto 0;
+    width: 60%;
+    height: 1px;
+    border: none;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(59, 130, 246, 0.3),
+      transparent
+    );
+    opacity: 0.7;
+  }
+
+  /* 每日轮换图片样式 */
+  .daily-rotating-image {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .daily-rotating-image:hover {
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .image-container {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .daily-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: opacity 0.5s ease-in-out;
+    border-radius: 12px;
+  }
+
+  .daily-image.loading {
+    opacity: 0.5;
+  }
+
+  /* 导航按钮 */
+  .nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    opacity: 0;
+    z-index: 10;
+  }
+
+  .prev-btn {
+    left: 20px;
+  }
+
+  .next-btn {
+    right: 20px;
+  }
+
+  .daily-rotating-image:hover .nav-btn {
+    opacity: 1;
+  }
+
+  .nav-btn:hover {
+    background: rgba(0, 0, 0, 0.6);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  /* 文章列表样式 */
+  .article-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 1rem;
+  }
+
+  .article-item {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: all 0.3s ease;
+    border-radius: 16px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  [data-theme="dark"] .article-item {
+    background: #2d2d3d;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .article-item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  [data-theme="dark"] .article-item:hover {
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .article-image {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .article-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.5s ease;
+  }
+
+  .article-item:hover .article-image img {
+    transform: scale(1.05);
+  }
+
+  .article-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    color: white;
+    font-size: 1.8rem;
+    font-weight: bold;
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    letter-spacing: 1px;
+  }
+
+  [data-theme="dark"] .article-title {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+  }
+
+  /* 响应式调整 */
+  @media (max-width: 768px) {
+    .quote-container {
+      margin: 1.5rem auto;
+      padding: 1.5rem;
+      max-width: 95%;
+    }
+    
+    .quote-text {
+      font-size: 1.1rem;
+      padding: 0.75rem;
+    }
+    
+    .quote-text::before,
+    .quote-text::after {
+      font-size: 2rem;
+    }
+
+    .daily-rotating-image {
+      border-radius: 8px;
+      max-width: 95%;
+    }
+    
+    .image-container {
+      height: 300px;
+    }
+
+    .nav-btn {
+      width: 40px;
+      height: 40px;
+      font-size: 24px;
+    }
+
+    .article-list {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      padding: 0 0.5rem;
+    }
+
+    .article-image {
+      height: 220px;
+    }
+
+    .article-title {
+      font-size: 1.5rem;
+      padding: 1.5rem 1rem 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .quote-container {
+      margin: 1rem auto;
+      padding: 1rem;
+    }
+    
+    .quote-text {
+      font-size: 1rem;
+      padding: 0.5rem;
+    }
+    
+    .quote-text::before,
+    .quote-text::after {
+      font-size: 1.8rem;
+    }
+
+    .image-container {
+      height: 250px;
+    }
+
+    .nav-btn {
+      width: 35px;
+      height: 35px;
+      font-size: 20px;
+    }
+
+    .article-image {
+      height: 200px;
+    }
+
+    .article-title {
+      font-size: 1.3rem;
+      padding: 1rem 0.5rem 0.5rem;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .article-list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }

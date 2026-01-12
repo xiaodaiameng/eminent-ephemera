@@ -1,19 +1,61 @@
 ---
 // src/pages/about.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
-
-// 如果想要确认对话框，必须用前端 JavaScript
+import '../styles/sidebar.css';
 ---
 
 <BaseLayout title="关于另一个后台" description="关于另一个后台">
-  <script>
-    setTimeout(() => {
-      const confirmed = confirm('即将进入 Java 项目演示');
-      if (confirmed) {
-        window.location.replace('/java-app/');
-      } else {
-        window.location.replace('/');
-      }
-    }, 100);
-  </script>
+  <!-- 自定义消息模态框 -->
+  <div id="custom-alert" class="custom-alert">
+    <div class="alert-content">
+      <div class="alert-header">
+        <h3>友情提示</h3>
+        <button class="alert-close">×</button>
+      </div>
+      <div class="alert-body">
+        <p>该页面还在开发中喔.</p>
+      </div>
+      <div class="alert-footer">
+        <button class="alert-confirm">好的</button>
+      </div>
+    </div>
+  </div>
 </BaseLayout>
+
+<script>
+  // 页面加载时自动显示告警框
+  document.addEventListener('DOMContentLoaded', function() {
+    const customAlert = document.getElementById('custom-alert');
+    const alertClose = customAlert.querySelector('.alert-close');
+    const alertConfirm = customAlert.querySelector('.alert-confirm');
+    
+    // 自动显示告警框
+    customAlert.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    
+    function closeAlert() {
+      customAlert.classList.remove('show');
+      document.body.style.overflow = '';
+    }
+    
+    // 点击关闭按钮
+    alertClose.addEventListener('click', closeAlert);
+    
+    // 点击确认按钮
+    alertConfirm.addEventListener('click', closeAlert);
+    
+    // 点击模态框外部关闭
+    customAlert.addEventListener('click', function(e) {
+      if (e.target === customAlert) {
+        closeAlert();
+      }
+    });
+    
+    // ESC键关闭
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && customAlert.classList.contains('show')) {
+        closeAlert();
+      }
+    });
+  });
+</script>
