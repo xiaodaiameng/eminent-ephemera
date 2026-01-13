@@ -5,9 +5,11 @@
 <header class="header-container">
   <div class="navbar max-w-7xl mx-auto px-4">
     <div class="flex-1">
+      <!-- 使用响应式类：小屏幕隐藏文字，中屏幕以上显示文字 -->
       <a href="/" class="btn btn-ghost text-xl">
         <img src="/favicon.svg" alt="Logo" class="w-8 h-8 mr-2" />
-        女巫之舞
+        <span class="hidden md:inline">女巫之舞</span>  <!-- md屏幕及以上显示 -->
+        <span class="sr-only">女巫之舞</span>  <!-- 屏幕阅读器仍然可以读取 -->
       </a>
     </div>
     
@@ -36,27 +38,40 @@
     z-index: 10;
   }
 
-  /* 确保在移动端也能正常显示 */
-  @media (max-width: 640px) {
-    .navbar {
-      flex-wrap: wrap;
-      justify-content: space-between;
+  /* 优化移动端显示 */
+  @media (max-width: 768px) {  /* 修改为768px断点 */
+    /* 在移动端减小Logo图标的间距 */
+    .btn-ghost .w-8.h-8.mr-2 {
+      margin-right: 0.25rem; /* 减少右边距 */
     }
     
-    .menu-horizontal {
-      flex-wrap: wrap;
-      justify-content: center;
-      width: 100%;
-      margin-top: 0.5rem;
-    }
-    
-    .menu-horizontal li {
-      margin: 0.25rem;
-    }
-    
+    /* 确保导航链接在小屏幕上可点击 */
     .menu-horizontal a {
       padding: 0.5rem 0.75rem;
       font-size: 0.875rem;
+    }
+  }
+  
+  /* 针对超小屏幕进一步优化 */
+  @media (max-width: 480px) {
+    .header-container {
+      padding: 0.1rem 0.5rem;
+    }
+    
+    /* 进一步减小Logo尺寸 */
+    .btn-ghost .w-8.h-8 {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+    
+    /* 导航链接更紧凑 */
+    .menu-horizontal li {
+      margin: 0 0.125rem;
+    }
+    
+    .menu-horizontal a {
+      padding: 0.375rem 0.5rem;
+      font-size: 0.75rem;
     }
   }
 </style>
