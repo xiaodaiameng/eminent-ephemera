@@ -16,11 +16,11 @@
   margin: 0 auto;
 }
 
-/* Markdown内容容器 - 圆角透明效果（移除了毛玻璃） */
+/* Markdown内容容器 - 圆角透明效果 */
 .markdown-content {
-  background: rgba(255, 255, 255, 0.95); /* 更不透明的背景 */
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.2); /* 更明显的边框 */
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 3rem;
   box-shadow: 
     0 20px 60px rgba(0, 0, 0, 0.15),
@@ -31,14 +31,14 @@
 
 /* 暗色主题适配 */
 [data-theme="dark"] .markdown-content {
-  background: rgba(30, 30, 40, 0.98); /* 暗色模式下更不透明 */
+  background: rgba(30, 30, 40, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 
     0 20px 60px rgba(0, 0, 0, 0.3),
     0 0 0 1px rgba(255, 255, 255, 0.02) inset;
 }
 
-/* 添加这段代码来显示列表标号 */
+/* 列表标号显示 */
 .markdown-content .prose ul {
   list-style-type: disc !important;
 }
@@ -52,7 +52,7 @@
   margin-left: 1.5em !important;
 }
 
-/* 添加装饰性渐变边框效果 */
+/* 装饰性渐变边框效果 */
 .markdown-content::before {
   content: '';
   position: absolute;
@@ -124,20 +124,43 @@
   border-bottom-color: #3b82f6;
 }
 
+/* 代码样式 - 统一处理 */
 .markdown-content .prose code {
   padding: 0.2rem 0.5rem;
   border-radius: 6px;
   font-size: 0.9em;
+  word-break: break-word; /* 允许长单词/字符串换行 */
+  white-space: pre-wrap; /* 保留空格但允许换行 */
 }
 
+/* 代码块样式 */
 .markdown-content .prose pre {
   border-radius: 12px;
   padding: 1.5rem;
-  overflow-x: auto;
   margin: 1.8rem 0;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* 移动端平滑滚动 */
+  background: #1e293b; /* 深色背景提高可读性 */
 }
 
+[data-theme="dark"] .markdown-content .prose pre {
+  background: #0f172a; /* 暗色模式下更深 */
+}
+
+.markdown-content .prose pre code {
+  white-space: pre; /* 代码块内保持原格式 */
+  word-break: normal; /* 代码块内不自动换行 */
+  display: block;
+  overflow-x: auto;
+  padding: 0;
+  background: transparent;
+  color: #e2e8f0;
+  font-size: 0.95em;
+}
+
+/* 引用块样式 */
 .markdown-content .prose blockquote {
   border-left: 4px solid #3b82f6;
   padding: 1.2rem 1.8rem;
@@ -186,7 +209,51 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
-/* 响应式设计 */
+/* 表格响应式处理 */
+.markdown-content .prose table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.markdown-content .prose table td,
+.markdown-content .prose table th {
+  padding: 0.75rem;
+  border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+[data-theme="dark"] .markdown-content .prose table td,
+[data-theme="dark"] .markdown-content .prose table th {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 滚动条样式美化 */
+.markdown-content .prose pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+.markdown-content .prose pre::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.markdown-content .prose pre::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 4px;
+}
+
+[data-theme="dark"] .markdown-content .prose pre::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .markdown-content .prose pre::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.7);
+}
+
+/* 响应式设计 - 平板和手机 */
 @media (max-width: 768px) {
   .article-container {
     padding: 0.5rem;
@@ -201,11 +268,36 @@
     font-size: 2rem;
   }
   
+  /* 代码块移动端优化 */
   .markdown-content .prose pre {
     padding: 1rem;
+    margin: 1rem 0;
+    font-size: 0.875em;
+    border-radius: 10px;
+  }
+  
+  .markdown-content .prose pre code {
+    font-size: 0.9em;
+  }
+  
+  /* 行内代码优化 */
+  .markdown-content .prose :not(pre) > code {
+    font-size: 0.85em;
+    padding: 0.15rem 0.4rem;
+  }
+  
+  /* 表格内文字优化 */
+  .markdown-content .prose table {
+    font-size: 0.875em;
+  }
+  
+  .markdown-content .prose table td,
+  .markdown-content .prose table th {
+    padding: 0.5rem;
   }
 }
 
+/* 响应式设计 - 小手机 */
 @media (max-width: 480px) {
   .markdown-content {
     padding: 1.2rem;
@@ -218,5 +310,24 @@
   
   .markdown-content::before {
     height: 3px;
+  }
+  
+  /* 代码块超小屏幕优化 */
+  .markdown-content .prose pre {
+    font-size: 0.8125em;
+    padding: 0.875rem;
+    border-radius: 8px;
+    margin-left: -0.875rem;
+    margin-right: -0.875rem;
+    width: calc(100% + 1.75rem);
+  }
+  
+  .markdown-content .prose pre code {
+    font-size: 0.85em;
+  }
+  
+  /* 确保代码块内滚动正常工作 */
+  .markdown-content .prose pre::-webkit-scrollbar {
+    height: 6px;
   }
 }
