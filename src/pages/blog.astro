@@ -13,34 +13,36 @@ const categorizedPosts = {
 };
 
 // 获取文件修改时间的函数
-async function getFileModifiedTime(slug) {
+async function getFileModifiedTime(slug, postData) {  // 添加 postData 参数
   try {
     // 只在 Node.js 环境下使用 fs
     if (typeof process === 'undefined' || !process.versions.node) {
-      return new Date();
+      return postData.pubDate || new Date();
     }
     
     const fs = await import('fs/promises');
     const path = await import('path');
     
-    // 构建文件路径
+    // 重要修改：slug 已经包含子目录路径，直接构建完整路径
     const filePath = path.join(process.cwd(), 'src/content/blog', `${slug}.md`);
     
     try {
       const stats = await fs.stat(filePath);
       return stats.mtime; // 返回文件的最后修改时间
-    } catch {
-      return new Date();
+    } catch (error) {
+      // 如果找不到文件，返回发布日期
+      console.warn(`无法找到文件: ${filePath}, 使用发布日期`);
+      return postData.pubDate || new Date();
     }
   } catch {
-    return new Date();
+    return postData.pubDate || new Date();
   }
 }
 
 // 处理所有文章
 const postsWithTime = await Promise.all(
   allPosts.map(async (post) => {
-    const lastModified = await getFileModifiedTime(post.slug);
+    const lastModified = await getFileModifiedTime(post.slug, post.data);
     return {
       ...post,
       lastModified
