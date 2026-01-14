@@ -12,40 +12,52 @@ const categorizedPosts = {
   社交: []
 };
 
-// 获取文件修改时间的函数
-async function getFileModifiedTime(slug, postData) {  // 添加 postData 参数
+// 使用 Git 获取文件创建和修改时间
+async function getGitFileTimes(slug) {
+  // 只在 Node.js 环境下
+  if (typeof process === 'undefined' || !process.versions.node) {
+    return { created: new Date(), modified: new Date() };
+  }
+  
   try {
-    // 只在 Node.js 环境下使用 fs
-    if (typeof process === 'undefined' || !process.versions.node) {
-      return postData.pubDate || new Date();
-    }
-    
-    const fs = await import('fs/promises');
+    const { execSync } = await import('child_process');
     const path = await import('path');
     
-    // 重要修改：slug 已经包含子目录路径，直接构建完整路径
-    const filePath = path.join(process.cwd(), 'src/content/blog', `${slug}.md`);
+    // 构建文件相对路径
+    const filePath = path.join('src/content/blog', `${slug}.md`);
     
+    // 获取最后修改时间（最后一次提交）
+    let modified = new Date();
     try {
-      const stats = await fs.stat(filePath);
-      return stats.mtime; // 返回文件的最后修改时间
-    } catch (error) {
-      // 如果找不到文件，返回发布日期
-      console.warn(`无法找到文件: ${filePath}, 使用发布日期`);
-      return postData.pubDate || new Date();
-    }
-  } catch {
-    return postData.pubDate || new Date();
+      const modCommand = `git log -1 --format="%ad" --date=iso-strict -- "${filePath}"`;
+      const modResult = execSync(modCommand, { encoding: 'utf-8' }).trim();
+      if (modResult) modified = new Date(modResult);
+    } catch {}
+    
+    // 获取创建时间（第一次提交）
+    let created = modified;
+    try {
+      const createCommand = `git log --format="%ad" --date=iso-strict --reverse -- "${filePath}" | head -1`;
+      const createResult = execSync(createCommand, { encoding: 'utf-8' }).trim();
+      if (createResult) created = new Date(createResult);
+    } catch {}
+    
+    return { created, modified };
+    
+  } catch (error) {
+    console.warn(`无法获取 Git 时间: ${slug}`, error.message);
+    return { created: new Date(), modified: new Date() };
   }
 }
 
 // 处理所有文章
 const postsWithTime = await Promise.all(
   allPosts.map(async (post) => {
-    const lastModified = await getFileModifiedTime(post.slug, post.data);
+    const times = await getGitFileTimes(post.slug);
     return {
       ...post,
-      lastModified
+      created: times.created,
+      lastModified: times.modified
     };
   })
 );
@@ -83,7 +95,7 @@ for (const category in categorizedPosts) {
             {post.data.title}
           </a>
           <span class="text-sm text-gray-500 ml-2">
-            （最后更新：{post.lastModified.toLocaleDateString('zh-CN')}）
+            （更新：{post.lastModified.toLocaleDateString('zh-CN')}）
           </span>
         </li>
       ))}
@@ -103,7 +115,7 @@ for (const category in categorizedPosts) {
             {post.data.title}
           </a>
           <span class="text-sm text-gray-500 ml-2">
-            （最后更新：{post.lastModified.toLocaleDateString('zh-CN')}）
+            （更新：{post.lastModified.toLocaleDateString('zh-CN')}）
           </span>
         </li>
       ))}
@@ -123,7 +135,7 @@ for (const category in categorizedPosts) {
             {post.data.title}
           </a>
           <span class="text-sm text-gray-500 ml-2">
-            （最后更新：{post.lastModified.toLocaleDateString('zh-CN')}）
+            （更新：{post.lastModified.toLocaleDateString('zh-CN')}）
           </span>
         </li>
       ))}
