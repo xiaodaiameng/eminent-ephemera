@@ -583,7 +583,11 @@ Option 60：本质是 “Vendor Class Identifier（厂商类标识）”，AP �
 
 5. PPP协议链路建立过程：在 dead之前：PADI、PADO、PADR、PADS，之后正式启动 dead：
 
-   dead ->establish (LCP报文) ->authenticate (可选)
+   ```
+   Dead ->Establish (LCP报文) ->Authenticate (可选) -> Network ->数据传输...-> Terminate Phase连接终止
+   ```
+
+   其实padt报文可以在ppp状态的任何阶段
 
 
 
