@@ -37,9 +37,11 @@ const { title = '女巫之舞', description = '女巫之舞，为你祈祷⭐' }
 </head>
 
 <body>
-  <slot/>
   <Loading/>
   <Header />
+    <main>
+      <slot/>
+    </main>
   <Footer />
   <Clicks/>
   <SnowControl />
