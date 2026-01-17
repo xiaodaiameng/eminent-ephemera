@@ -11,7 +11,6 @@ import 'src/styles/oldblogpages.css';
       <div class="prose">
         <!-- 每日语录部分 -->
         <div class="quote-container">
-          <!-- 只保留容器，内容由JS填充 -->
           <div class="quote-text" id="daily-quote"></div>
           <hr />
         </div>
@@ -20,7 +19,6 @@ import 'src/styles/oldblogpages.css';
         <div class="daily-rotating-image">
           <div class="image-container" id="image-container">
             <img id="daily-img" alt="每日图片" loading="lazy" class="daily-image">
-            <!-- 导航按钮 -->
             <button class="nav-btn prev-btn" id="prev-btn" aria-label="上一张">‹</button>
             <button class="nav-btn next-btn" id="next-btn" aria-label="下一张">›</button>
           </div>
@@ -30,7 +28,6 @@ import 'src/styles/oldblogpages.css';
         
         <!-- 文章列表 -->
         <div class="article-list">
-          <!-- 文章1 -->
           <a href="/blog/学习" class="article-item">
             <div class="article-image">
               <img src="/images/xiaohei.jpg" alt="学习" />
@@ -38,7 +35,6 @@ import 'src/styles/oldblogpages.css';
             </div>
           </a>
           
-          <!-- 文章2 -->
           <a href="/blog/社交" class="article-item">
             <div class="article-image">
               <img src="/images/fulilian.jpg" alt="社交" />
@@ -46,7 +42,6 @@ import 'src/styles/oldblogpages.css';
             </div>
           </a>
           
-          <!-- 文章3 -->
           <a href="/blog/个体" class="article-item">
             <div class="article-image">
               <img src="/images/aniya.jpg" alt="个体" />
@@ -59,27 +54,21 @@ import 'src/styles/oldblogpages.css';
   </main>
 </BaseLayout>
 
-
-
 <script>
-  // 使用立即执行函数避免全局变量污染
   (function() {
     'use strict';
     
-    // 每日语录列表
 const quotes = [
-  `"曾经沧海难为水，除却巫山不是云。" ——元稹`,
-  `"我达达的马蹄是个美丽的错误
+      `"Just a little more"`,
+      `"我达达的马蹄是个美丽的错误
 我不是归人，是个过客"`,
-  `"近水楼台先得月，向阳花木易为春。" ——苏麟`,
-  '"采菊东篱下，悠然见南山。" ——陶渊明',
- '"春风得意马蹄疾，一日看尽长安花。" ——孟郊',
-  `"梦想不会逃跑，逃跑的只有自己。"`,
-  `"滕王高阁临江渚，佩玉鸣鸾罢歌舞。
+      `"近水楼台先得月，向阳花木易为春。" ——苏麟`,
+      `"梦想不会逃跑，逃跑的只有自己。"`,
+      `"滕王高阁临江渚，佩玉鸣鸾罢歌舞。
 画栋朝飞南浦云，珠帘暮卷西山雨。
 闲云潭影日悠悠，物换星移几度秋。
 阁中帝子今何在？槛外长江空自流。"`,
-`《回答》
+      `《回答》
 北岛
 卑鄙是卑鄙者的通行证，
 高尚是高尚者的墓志铭，
@@ -100,43 +89,42 @@ const quotes = [
 新的转机和闪闪星斗，正在缀满没有遮拦的天空。
 那是五千年的象形文字，
 那是未来人们凝视的眼睛。`,
-  `"当你凝视深渊时，深渊也在凝视着你。" ——尼采`,
-  `"海上生明月，天涯共此时。" ——张九龄`,
-  `"一念四海平，一念百花开。"`,
-  `"Just a little more"`
+      `"当你凝视深渊时，深渊也在凝视着你。" ——尼采`,
+      `"海上生明月，天涯共此时。" ——张九龄`,
+      '"春风得意马蹄疾，一日看尽长安花。" ——孟郊',      
+      '"采菊东篱下，悠然见南山。" ——陶渊明',
+      `"曾经沧海难为水，除却巫山不是云。" ——元稹`,
+      `"一念四海平，一念百花开。"`
 ];
     
     const imageList = [
+      '/images/zou.jpg',
       '/images/girl.jpg',
       '/images/witch.png',
       '/images/welcome.jpg',
+      '/images/jiatenghui.jpg',
+      '/images/xinmeier.jpg',
+      '/images/xisiteliya.jpg',
+      '/images/haizeiwang2.jpg',  
+      '/images/kelasong.jpg',
+      '/images/youyouzi.jpg', 
       '/images/butterflies.jpg',
       '/images/ganlusimili.jpg',
       '/images/xiamu.jpg',
-      '/images/haizeiwang.jpg',
-      '/images/jiatenghui.jpg',
-      '/images/kelasong.jpg',
-      '/images/youyouzi.jpg',
-      '/images/haizeiwang2.jpg',
-      '/images/xinmeier.jpg',
-      '/images/xisiteliya.jpg',
-      '/images/zou.jpg'
+      '/images/haizeiwang.jpg'
+
     ];
     
-    // 轮播状态变量
     let currentImageIndex = 0;
     let touchStartX = 0;
     
-    // 获取DOM元素
     const dailyImg = document.getElementById('daily-img');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     const imageContainer = document.getElementById('image-container');
     const quoteElement = document.getElementById('daily-quote');
     
-    // 安全地显示图片
     function showImage(index) {
-      // 确保索引在有效范围内
       if (index < 0) {
         index = imageList.length - 1;
       } else if (index >= imageList.length) {
@@ -145,42 +133,32 @@ const quotes = [
       
       currentImageIndex = index;
       
-      // 更新图片
       if (dailyImg) {
-        const imageUrl = imageList[currentImageIndex];
-        const imageAlt = `每日图片 ${currentImageIndex + 1}/${imageList.length}`;
-        
-        // 使用setAttribute避免类型错误
-        dailyImg.setAttribute('src', imageUrl);
-        dailyImg.setAttribute('alt', imageAlt);
-        
-        // 淡入效果
+        dailyImg.setAttribute('src', imageList[currentImageIndex]);
+        dailyImg.setAttribute('alt', `每日图片 ${currentImageIndex + 1}/${imageList.length}`);
         dailyImg.style.opacity = '0';
-        setTimeout(function() {
-          dailyImg.style.opacity = '1';
-        }, 50);
+        setTimeout(() => { dailyImg.style.opacity = '1'; }, 50);
       }
     }
     
-    // 加载每日图片
     function loadDailyImage() {
       const today = new Date();
-      const dayOfWeek = today.getDay();
-      currentImageIndex = dayOfWeek % imageList.length;
+      const year = today.getFullYear();
+      const month = today.getMonth();
+      const date = today.getDate();
+      const dayId = year * 10000 + (month + 1) * 100 + date;
+      currentImageIndex = dayId % imageList.length;
       showImage(currentImageIndex);
     }
     
-    // 显示上一张图片
     function showPrevImage() {
       showImage(currentImageIndex - 1);
     }
     
-    // 显示下一张图片
     function showNextImage() {
       showImage(currentImageIndex + 1);
     }
     
-    // 触摸事件处理
     function handleTouchStart(event) {
       if (event.touches && event.touches.length > 0) {
         touchStartX = event.touches[0].clientX;
@@ -193,13 +171,10 @@ const quotes = [
       const touchEndX = event.changedTouches[0].clientX;
       const diff = touchStartX - touchEndX;
       
-      // 滑动阈值
       if (Math.abs(diff) > 50) {
         if (diff > 0) {
-          // 向左滑动，显示下一张
           showNextImage();
         } else {
-          // 向右滑动，显示上一张
           showPrevImage();
         }
       }
@@ -207,20 +182,16 @@ const quotes = [
       touchStartX = 0;
     }
     
-    // 每日语录功能
     function setupDailyQuote() {
       if (!quoteElement) return;
       
       const today = new Date();
       const dateString = today.getFullYear().toString() + today.getMonth().toString() + today.getDate().toString();
       const quoteIndex = parseInt(dateString) % quotes.length;
-      
       quoteElement.textContent = quotes[quoteIndex];
     }
     
-    // 绑定事件
     function bindEvents() {
-      // 按钮事件
       if (prevBtn) {
         prevBtn.addEventListener('click', showPrevImage);
       }
@@ -229,8 +200,7 @@ const quotes = [
         nextBtn.addEventListener('click', showNextImage);
       }
       
-      // 键盘事件
-      document.addEventListener('keydown', function(event) {
+      document.addEventListener('keydown', (event) => {
         if (event.key === 'ArrowLeft') {
           showPrevImage();
         } else if (event.key === 'ArrowRight') {
@@ -238,30 +208,21 @@ const quotes = [
         }
       });
       
-      // 触摸事件
       if (imageContainer) {
         imageContainer.addEventListener('touchstart', handleTouchStart);
         imageContainer.addEventListener('touchend', handleTouchEnd);
       }
     }
     
-    // 初始化页面
     function initPage() {
-      // 设置每日语录
       setupDailyQuote();
-      
-      // 加载每日图片
       loadDailyImage();
-      
-      // 绑定事件
       bindEvents();
     }
     
-    // 页面加载完成后初始化
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initPage);
     } else {
-      // DOM已经加载完成
       initPage();
     }
   })();
