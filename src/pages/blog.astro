@@ -12,17 +12,32 @@ const categorizedPosts = {
   社交: []
 };
 
-// 处理所有文章
+// 处理所有文章 - 修复时间问题
 const postsWithTime = allPosts.map((post) => {
-  // 从 frontmatter 获取时间
-  // 优先使用 updated 字段，如果不存在则使用 pubDate
-  const lastModified = post.data.updated || post.data.pubDate;
-  const created = post.data.pubDate;
+  // 关键：将字符串日期转换为 Date 对象
+  let created = new Date();
+  let lastModified = new Date();
+  
+  if (post.data.pubDate) {
+    // 处理 pubDate（可能是字符串或 Date 对象）
+    created = post.data.pubDate instanceof Date 
+      ? post.data.pubDate 
+      : new Date(post.data.pubDate);
+  }
+  
+  if (post.data.updated) {
+    // 处理 updated（可能是字符串或 Date 对象）
+    lastModified = post.data.updated instanceof Date
+      ? post.data.updated
+      : new Date(post.data.updated);
+  } else {
+    lastModified = created;
+  }
   
   return {
     ...post,
-    created: created || new Date(), // 确保有创建时间
-    lastModified: lastModified || created || new Date() // 确保有更新时间
+    created,
+    lastModified
   };
 });
 

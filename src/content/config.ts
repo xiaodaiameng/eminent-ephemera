@@ -5,7 +5,8 @@ const blogCollection = defineCollection({
   type: 'content',
   schema: z.object({
     title: z.string(),
-    // 只需要标题，时间自动获取
+    pubDate: z.date(),  // 添加这行！重要！
+    updated: z.date().optional(),  // 需要更新时间的话
   }),
 });
 
