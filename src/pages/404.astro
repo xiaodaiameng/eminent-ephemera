@@ -5,66 +5,86 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 
 <BaseLayout title="页面未找到" description="抱歉，您访问的页面不存在">
   <div class="min-h-screen flex items-center justify-center">
-    <div class="bg-container"></div>
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px] z-0"></div>
+    <!-- 移除 .bg-container 和遮罩层 div -->
     <div class="relative z-10 text-center px-4 max-w-2xl">
-      <h1 class="text-[140px] md:text-[200px] font-black mb-0 leading-none " style= "color:#e0f7fa;">
+      <h1 class="text-[140px] md:text-[200px] font-black mb-0 leading-none" style="color:#e0f7fa;">
         404
       </h1>
       <p class="text-xl mb-8 opacity-70">
         您走错地方啦。
       </p>
       <div class="flex flex-wrap gap-4 justify-center">
-      <a href="/" 
-        class="inline-block px-8 py-3 text-white text-lg font-medium rounded-lg transition-all duration-300 hover:scale-105"
-        style="
-          background: linear-gradient(135deg, #c6fbff 0%, #cf9fffd2 100%);
-          color: #ffffff;
-          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        "
->
-          返回首页
-        </a>
-      <a href="/oldblogpages" 
-        class="inline-block px-8 py-3 text-white text-lg font-medium rounded-lg transition-all duration-300 hover:scale-105"
-        style="
-          background: linear-gradient(135deg, #f5deff 0%, #ff7d7dd2 100%);
-          color: #ffffff;
-          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        "
->          查看博客
-        </a>
+        <a href="/" 
+          class="inline-block px-8 py-3 text-white text-lg font-medium rounded-lg transition-all duration-300 hover:scale-105"
+          style="
+            background: linear-gradient(135deg, #c6fbff 0%, #cf9fffd2 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+          "
+        >返回首页</a>
+        <a href="/oldblogpages" 
+          class="inline-block px-8 py-3 text-white text-lg font-medium rounded-lg transition-all duration-300 hover:scale-105"
+          style="
+            background: linear-gradient(135deg, #f5deff 0%, #ff7d7dd2 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+          "
+        >查看博客</a>
       </div>
     </div>
   </div>
 </BaseLayout>
 
 <style>
-  .bg-container {
+  /* 在 body 或 html 上设置背景图 */
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  /* 为整个页面设置背景图 */
+  body {
+    background-color: #1a1a1a; /* 回退颜色 */
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  /* 移动端背景图 */
+  @media (max-width: 768px) {
+    body {
+      background-image: url('/images/cats.jpg');
+    }
+  }
+
+  /* 桌面端背景图 */
+  @media (min-width: 769px) {
+    body {
+      background-image: url('/images/zou.jpg');
+    }
+  }
+
+  /* 深色遮罩层（可选，让文字更清晰） */
+  body::before {
+    content: '';
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #1a1a1a;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* 半透明黑色遮罩 */
     z-index: 0;
   }
-  @media (max-width: 768px) {
-    .bg-container {
-      background-image: url('/images/cats.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
+
+  /* 确保内容在遮罩之上 */
+  .relative {
+    position: relative;
+    z-index: 1;
   }
-  @media (min-width: 769px) {
-    .bg-container {
-      background-image: url('/images/zou.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-    }
-  }
+
   @media (max-width: 640px) {
     h1 {
       font-size: 120px !important;

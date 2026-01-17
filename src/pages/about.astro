@@ -2,11 +2,53 @@
 // src/pages/about.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 import '../styles/sidebar.css';
+import '../styles/blog.css';
 ---
 
 <BaseLayout title="关于另一个后台" description="关于另一个后台">
-   <br><br><br><br><br><br><br><br><br><br><br><br><br><br> 
-   <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  <br><br><br><br><br><br>
+  
+  <div class="content-container">
+    <table class="subject-table">
+      <p style="color: #000000; margin: 0; font-size: 18px; font-weight: bold;">开往何处</p>
+      <tr class="table-row">
+        <td class="table-cell">
+          <img src="/images/bigeduodong.webp" alt="图片" class="table-image"/>
+        </td>
+        <td class="table-cell">
+          <h2 class="table-title">
+            <a href="http://localhost:8080" target="_blank" class="table-link">sp001_db</a>
+          </h2>
+          <p class="table-desc">bobooksys && 阻塞状态</p>
+        </td>
+      </tr>
+      <tr class="table-row">
+        <td class="table-cell">
+          <img src="/images/bigeduodong.webp" alt="图片" class="table-image"/>
+        </td>
+        <td class="table-cell">
+          <h2 class="table-title">
+            <!-- 修改：使用 class 而不是 id -->
+            <a href="javascript:void(0);" class="table-link show-alert-link">空白</a>
+          </h2>
+          <p class="table-desc">完全空白状态</p>
+        </td>
+      </tr>
+      <tr class="table-row">
+        <td class="table-cell">
+          <img src="/images/bigeduodong.webp" alt="图片" class="table-image"/>
+        </td>
+        <td class="table-cell">
+          <h2 class="table-title">
+            <!-- 修改：使用相同的 class -->
+            <a href="javascript:void(0);" class="table-link show-alert-link">空白</a>
+          </h2>
+          <p class="table-desc">完全空白状态</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+  
   <!-- 自定义消息模态框 -->
   <div id="custom-alert" class="custom-alert">
     <div class="alert-content">
@@ -15,55 +57,37 @@ import '../styles/sidebar.css';
         <button class="alert-close">×</button>
       </div>
       <div class="alert-body">
-        <p>该页面还在开发中喔.</p>
+        <p>这个人很懒，什么都没留下呢。</p>
       </div>
       <div class="alert-footer">
-        <button class="alert-confirm">好的</button>
+        <button class="alert-confirm">确定</button>
       </div>
     </div>
   </div>
   
-  <!-- 返回首页按钮（默认隐藏） -->
-  <div id="back-to-home" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
-    <a href="/" style="
-      display: inline-block;
-      padding: 15px 28px;
-      background-color: #ffcafa;
-      color: rgb(255, 255, 255);
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      box-shadow: 0 4px 12px rgb(114, 101, 255);
-      transition: all 0.3s ease;
-    " 
-    onmouseover="this.style.backgroundColor='#caffff'; this.style.transform='translateY(-2px)';"
-    onmouseout="this.style.backgroundColor='#ffcafa'; this.style.transform='translateY(0)';">
-      返回首页
-    </a>
-  </div>
-  
-  <br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+  <br><br><br><br><br><br><br><br><br><br><br><br>
 </BaseLayout>
 
 <script>
-  // 页面加载时自动显示告警框
   document.addEventListener('DOMContentLoaded', function() {
+    // 修改：使用 class 选择器获取所有链接
+    const showAlertLinks = document.querySelectorAll('.show-alert-link');
     const customAlert = document.getElementById('custom-alert');
     const alertClose = customAlert.querySelector('.alert-close');
     const alertConfirm = customAlert.querySelector('.alert-confirm');
-    const backToHome = document.getElementById('back-to-home');
     
-    // 自动显示告警框
-    customAlert.classList.add('show');
-    document.body.style.overflow = 'hidden';
+    // 为每个链接添加点击事件
+    showAlertLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        customAlert.classList.add('show');
+        document.body.style.overflow = 'hidden';
+      });
+    });
     
     function closeAlert() {
       customAlert.classList.remove('show');
       document.body.style.overflow = '';
-      
-      // 显示返回首页按钮
-      backToHome.style.display = 'block';
     }
     
     // 点击关闭按钮
