@@ -12,55 +12,19 @@ const categorizedPosts = {
   社交: []
 };
 
-// 使用 Git 获取文件创建和修改时间
-async function getGitFileTimes(slug) {
-  // 只在 Node.js 环境下
-  if (typeof process === 'undefined' || !process.versions.node) {
-    return { created: new Date(), modified: new Date() };
-  }
-  
-  try {
-    const { execSync } = await import('child_process');
-    const path = await import('path');
-    
-    // 构建文件相对路径
-    const filePath = path.join('src/content/blog', `${slug}.md`);
-    
-    // 获取最后修改时间（最后一次提交）
-    let modified = new Date();
-    try {
-      const modCommand = `git log -1 --format="%ad" --date=iso-strict -- "${filePath}"`;
-      const modResult = execSync(modCommand, { encoding: 'utf-8' }).trim();
-      if (modResult) modified = new Date(modResult);
-    } catch {}
-    
-    // 获取创建时间（第一次提交）
-    let created = modified;
-    try {
-      const createCommand = `git log --format="%ad" --date=iso-strict --reverse -- "${filePath}" | head -1`;
-      const createResult = execSync(createCommand, { encoding: 'utf-8' }).trim();
-      if (createResult) created = new Date(createResult);
-    } catch {}
-    
-    return { created, modified };
-    
-  } catch (error) {
-    console.warn(`无法获取 Git 时间: ${slug}`, error.message);
-    return { created: new Date(), modified: new Date() };
-  }
-}
-
 // 处理所有文章
-const postsWithTime = await Promise.all(
-  allPosts.map(async (post) => {
-    const times = await getGitFileTimes(post.slug);
-    return {
-      ...post,
-      created: times.created,
-      lastModified: times.modified
-    };
-  })
-);
+const postsWithTime = allPosts.map((post) => {
+  // 从 frontmatter 获取时间
+  // 优先使用 updated 字段，如果不存在则使用 pubDate
+  const lastModified = post.data.updated || post.data.pubDate;
+  const created = post.data.pubDate;
+  
+  return {
+    ...post,
+    created: created || new Date(), // 确保有创建时间
+    lastModified: lastModified || created || new Date() // 确保有更新时间
+  };
+});
 
 // 按分类分组
 for (const post of postsWithTime) {
