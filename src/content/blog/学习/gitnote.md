@@ -81,6 +81,10 @@ git add . 		# 只对当时文件夹里已经存在的文件有效。如果是在
 git add <文件名.文件扩展名>		# 后续简写为<文件名>
 git add -p		# 交互式添加，git 会逐个显示每个变化块，问你是否要添加到暂存区
 git restore --staged <不想提交的文件名>		# 发现不想提交的文件，可以从暂存区移除。
+
+取消跟踪：
+git rm <文件名>	删除文件
+git rm --cached <文件名>	仅停止跟踪，本地文件保留
 ```
 
 ##### 3）正式提交
@@ -204,6 +208,7 @@ git remote add origin https://github.com/githubName/repositoryName.git
 
 ```
 git pull <远程仓库简称> <本地分支名称>
+git pull origin main --allow-unrelated-histories   # 允许合并不相关的历史
 ```
 
 强行覆盖：
