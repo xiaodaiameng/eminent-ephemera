@@ -1,8 +1,46 @@
 ---
-title: '英语作文'
+title: '英语作文andlittle'
 pubDate: 2025-12-19
 updated: 2025-12-19
 ---
+
+
+
+MVP  Minimum Viable Product 最小可行产品
+
+assignments n.安排
+
+isometric adj.等长的（运动的肌肉收缩方面）n.肌肉运动
+
+traumatic adj.创伤的（ptsd，post-Trauamtic Stress Disorder)
+
+stationary adj.静止固定的
+
+weightlifting n.举重
+
+therapy n.治疗，疗法
+
+spin v.旋转，转动（自行车轮）
+
+cardio n.有氧运动，心血管锻炼（cardiovascular）
+
+immune system n.免疫系统
+
+racquetball n.壁球
+
+stand up
+dropped out of 退出
+
+drop sb. off 把某人送到某处然后离开
+
+```
+There's free childcare here, I dropped my son off when I swim on Mondays.
+```
+
+put off 推迟
+
+pick out 挑出
+
 
 
 #####   一、
